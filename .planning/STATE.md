@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
-stopped_at: Completed 01-02-PLAN.md
-last_updated: "2026-09-02T22:40:45.907Z"
+status: verifying
+stopped_at: Completed 01-03-PLAN.md
+last_updated: "2026-09-02T22:47:39.789Z"
 last_activity: 2026-09-02
 progress:
   total_phases: 5
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 3
-  completed_plans: 2
-  percent: 0
+  completed_plans: 3
+  percent: 20
 ---
 
 # Project State
@@ -27,10 +27,10 @@ See: .planning/PROJECT.md (updated 2026-09-02)
 
 Phase: 01 (foundation-design-system) — EXECUTING
 Plan: 3 of 3
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-09-02
 
-Progress: [███████░░░] 67%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -54,6 +54,7 @@ Progress: [███████░░░] 67%
 *Updated after each plan completion*
 | Phase 01 P01 | 30min | 3 tasks | 11 files |
 | Phase 01 P02 | 45min | 2 tasks | 3 files |
+| Phase 01 P03 | 25min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -69,6 +70,8 @@ Recent decisions affecting current work:
 - [Phase 01-01]: All 7 required Material Symbols glyphs use base names, no -outline suffix — Confirmed via live Iconify search in RESEARCH.md — 4 glyphs have no outline variant at all, and the 3 that do map base-name=filled per Iconify convention, matching the prototype's FILL 1 usage
 - [Phase 01-02]: @theme static (not plain @theme) used in global.css — Tailwind v4 prunes unreferenced theme variables from built CSS by default; static disables that pruning so all 47 DESIGN.md colors survive into dist/ regardless of current usage
 - [Phase 01-02]: glass-panel writes only unprefixed backdrop-filter, relies on Lightning CSS autoprefixer for the -webkit- twin — Hand-writing both properties triggers a Lightning CSS prefix-collapsing pass that silently drops whichever is written first, breaking cross-browser rendering depending on declaration order
+- [Phase 01-03]: scripts/verify-content-schema.mjs runs two full astro build subprocess invocations (positive + negative) to prove schema enforcement, not just assert it
+- [Phase 01-03]: src/data/site.ts scaffolded as a plain typed TS singleton (D-02), not a Content Collection — reserved for the one genuine repeating list (projects)
 
 ### Pending Todos
 
@@ -88,7 +91,7 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-09-02T22:40:45.799Z
-Stopped at: Completed 01-02-PLAN.md
+Last session: 2026-09-02T22:47:39.746Z
+Stopped at: Completed 01-03-PLAN.md
 Resume file: None
 </content>

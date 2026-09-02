@@ -12,7 +12,7 @@ The site is built bottom-up: first a secure, self-hosted build foundation (no ex
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation & Design System** - Secure, self-hosted build pipeline and design tokens with zero external script/font/icon origins
+- [x] **Phase 1: Foundation & Design System** - Secure, self-hosted build pipeline and design tokens with zero external script/font/icon origins (completed 2026-09-02)
 - [ ] **Phase 2: Layout & Navigation Shell** - Shared nav/footer/page shell matching the design system, in PT-BR, fully keyboard-accessible
 - [ ] **Phase 3: Content Sections** - Hero, Dossier, Tech Stack, Projects, and Contact sections rendered and responsive per the prototype
 - [ ] **Phase 4: SEO, Accessibility & Polish** - Discoverability, share previews, custom 404, and accessibility verification
@@ -32,7 +32,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 3 plans (2 waves)
 - [x] 01-01-PLAN.md — Walking Skeleton: Astro build pipeline with self-hosted fonts/icons and the automated SEC-01 zero-external-origin gate
 - [x] 01-02-PLAN.md — DESIGN.md tokens wired into Tailwind v4 `@theme`, prototype CSS primitives, and an automated token-fidelity gate
-- [ ] 01-03-PLAN.md — `projects` Content Collection schema with a validated placeholder entry, plus the typed `site.ts` singleton
+- [x] 01-03-PLAN.md — `projects` Content Collection schema with a validated placeholder entry, plus the typed `site.ts` singleton
 **UI hint**: yes
 
 ### Phase 2: Layout & Navigation Shell
@@ -95,7 +95,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Design System | 2/3 | In Progress|  |
+| 1. Foundation & Design System | 3/3 | Complete   | 2026-09-02 |
 | 2. Layout & Navigation Shell | 0/TBD | Not started | - |
 | 3. Content Sections | 0/TBD | Not started | - |
 | 4. SEO, Accessibility & Polish | 0/TBD | Not started | - |
