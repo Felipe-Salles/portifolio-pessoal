@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 01-01-PLAN.md
-last_updated: "2026-09-02T22:26:05.257Z"
+stopped_at: Completed 01-02-PLAN.md
+last_updated: "2026-09-02T22:40:45.907Z"
 last_activity: 2026-09-02
 progress:
   total_phases: 5
   completed_phases: 0
   total_plans: 3
-  completed_plans: 1
+  completed_plans: 2
   percent: 0
 ---
 
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-09-02)
 ## Current Position
 
 Phase: 01 (foundation-design-system) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 Status: Ready to execute
 Last activity: 2026-09-02
 
-Progress: [███░░░░░░░] 33%
+Progress: [███████░░░] 67%
 
 ## Performance Metrics
 
@@ -53,6 +53,7 @@ Progress: [███░░░░░░░] 33%
 
 *Updated after each plan completion*
 | Phase 01 P01 | 30min | 3 tasks | 11 files |
+| Phase 01 P02 | 45min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -66,6 +67,8 @@ Recent decisions affecting current work:
 - [Phase 01-01]: TypeScript pinned to ^6.0.3 (not npm latest 7.0.2) — outside @astrojs/check's peer range — npm latest is 7.0.2 which falls outside @astrojs/check@0.9.10's peer range ^5.0.0 || ^6.0.0, confirmed live at execution time
 - [Phase 01-01]: SEC-01 enforced by a deterministic dist/ scan, not manual DevTools inspection — Catches bare rel=preconnect tags (external DNS/TCP handshake) that a Network-tab visual scan misses
 - [Phase 01-01]: All 7 required Material Symbols glyphs use base names, no -outline suffix — Confirmed via live Iconify search in RESEARCH.md — 4 glyphs have no outline variant at all, and the 3 that do map base-name=filled per Iconify convention, matching the prototype's FILL 1 usage
+- [Phase 01-02]: @theme static (not plain @theme) used in global.css — Tailwind v4 prunes unreferenced theme variables from built CSS by default; static disables that pruning so all 47 DESIGN.md colors survive into dist/ regardless of current usage
+- [Phase 01-02]: glass-panel writes only unprefixed backdrop-filter, relies on Lightning CSS autoprefixer for the -webkit- twin — Hand-writing both properties triggers a Lightning CSS prefix-collapsing pass that silently drops whichever is written first, breaking cross-browser rendering depending on declaration order
 
 ### Pending Todos
 
@@ -85,7 +88,7 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-09-02T22:26:05.125Z
-Stopped at: Completed 01-01-PLAN.md
+Last session: 2026-09-02T22:40:45.799Z
+Stopped at: Completed 01-02-PLAN.md
 Resume file: None
 </content>
