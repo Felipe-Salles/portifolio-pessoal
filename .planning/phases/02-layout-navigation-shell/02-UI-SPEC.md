@@ -52,12 +52,15 @@ Exceptions:
 
 | Role | Size | Weight | Line Height | Usage |
 |------|------|--------|-------------|-------|
-| Label | 14px (`text-mono-label`, JetBrains Mono) | 500 | 20px | Desktop nav links, Connect button, mobile overlay links (uppercase, `tracking-widest`), skip link, footer social link labels |
-| Body | 13px (`text-mono-code`, JetBrains Mono) | 400 | 20px | Footer copyright line |
+| Label | 14px (`text-mono-label`, JetBrains Mono) | 500 | 20px | Desktop nav links, Connect button, mobile overlay links (uppercase, `tracking-widest`), skip link, footer copyright line, footer social link labels |
 | Heading | 32px (`text-headline-md`, Lexend) | 600 | 40px | Nav brand wordmark (`site.brand`) — desktop and mobile, same size |
 | Display | N/A this phase | — | — | No display-scale text in nav/footer; Hero's `display-lg`/`display-lg-mobile` is Phase 3 scope |
 
-**Correction to the prototype:** `code.html` applies both `text-headline-md` (600 weight, from the token) AND an explicit `font-bold` (700) class to the nav brand wordmark simultaneously — a genuine conflict in the prototype markup. Per Phase 1's precedent ("DESIGN.md frontmatter is canonical over `code.html`"), the executor MUST use `font-headline-md text-headline-md` only, weight 600, and drop the redundant `font-bold` override.
+Only two font sizes (14px, 32px) and two font weights (500, 600) are declared for this phase, per the project's 2-weight typography budget.
+
+**Correction to the prototype (nav brand weight):** `code.html` applies both `text-headline-md` (600 weight, from the token) AND an explicit `font-bold` (700) class to the nav brand wordmark simultaneously — a genuine conflict in the prototype markup. Per Phase 1's precedent ("DESIGN.md frontmatter is canonical over `code.html`"), the executor MUST use `font-headline-md text-headline-md` only, weight 600, and drop the redundant `font-bold` override.
+
+**Correction to the prototype (footer text weight):** `code.html`'s footer uses two different mono treatments — `font-mono-label text-mono-label` (14px/500) for the copyright line and `font-mono-code text-mono-code` (13px/400) for the social link row. Carrying both into this phase would introduce a third distinct font weight (500 label + 400 body + 600 heading), violating the project's 2-weight-per-phase typography budget. This contract standardizes all footer text — copyright line and social link row alike — on `text-mono-label` (14px/500), matching the nav's existing label treatment, and drops the `mono-code` (13px/400) token from this phase entirely. `mono-code` remains a valid token in the broader design system for future phases (e.g. code snippets, tech-stack tags in Phase 3) — it is simply out of scope for Phase 2's nav/footer shell.
 
 Mobile overlay links use the same `headline-md` size/weight as the nav brand (32px/600/Lexend) for large, centered tap targets per D-01 — plus `uppercase tracking-widest` utility classes layered on top for stylistic continuity with the desktop nav's mono treatment. This does not introduce a new type-scale token; it reuses `headline-md` verbatim.
 
@@ -66,7 +69,7 @@ Mobile overlay links use the same `headline-md` size/weight as the nav brand (32
 ## Color
 
 | Role | Value | Usage |
-|------|-------|-------|
+|------|------|------|
 | Dominant (60%) | `#111417` (`--color-background` / `--color-surface`) | Body canvas, nav bar backdrop base, footer section background base |
 | Secondary (30%) | `#0c0e12` (`--color-surface-container-lowest`) for the footer band; `rgba(20,27,34,0.6)` + `backdrop-blur-xl` (nav bar's `bg-background/60 backdrop-blur-xl`, matching the prototype) for the sticky nav surface; `#3b494b` (`--color-outline-variant`, at 20-30% alpha per prototype) for the nav's bottom hairline and footer's top hairline | Nav bar surface, footer band, dividing borders |
 | Accent (10%) | `#00f0ff` (`--color-primary-container`) | See "Accent reserved for" below — a strict, closed list |
@@ -107,6 +110,9 @@ Mobile overlay links use the same `headline-md` size/weight as the nav brand (32
 
 *(Supplementary section — this phase's core deliverable is interaction/structure, not visual polish, so the fixed template categories above don't fully capture it.)*
 
+### Visual hierarchy
+Primary visual anchor on the nav bar is the brand wordmark (top-left, `headline-md`, largest element in the shell); the Connect button is the secondary CTA anchor (top-right, accent-bordered ghost style, the only bordered element in the nav row). In the footer, the copyright line anchors the start position and the social link row anchors the end position — the footer has no single dominant focal element by design, consistent with its low-emphasis, low-contrast (`on-surface-variant`) role at the bottom of the page.
+
 ### Semantic landmarks (SEO-06, A11Y-01)
 - `<html lang="pt-BR">` — already correct in `src/layouts/Base.astro`, do not regress
 - `<nav aria-label="Navegação principal">` wraps the nav bar
@@ -145,8 +151,8 @@ Mobile overlay links use the same `headline-md` size/weight as the nav brand (32
 ### Footer (D-03)
 - `<footer>` band: `bg-surface-container-lowest w-full border-t border-outline-variant/20`, top margin `mt-section-gap` (only meaningful once Phase 3's sections exist above it — harmless now)
 - Inner row: `flex flex-col md:flex-row justify-between items-center`, `px-margin-mobile md:px-gutter py-unit gap-4 max-w-container-max mx-auto`
-- Left: copyright line (see Copywriting Contract), `font-mono-code text-mono-code text-on-surface-variant`
-- Right: link row rendered from `site.socials` (D-03) — `flex gap-6 font-mono-code text-mono-code uppercase text-on-surface-variant`, each `<a>` uses `site.socials[i].href` and `site.socials[i].label` (not `.icon`; footer is text-style links, distinct from the Contact section's icon-circle treatment which is Phase 3 scope), hover `hover:text-primary-container transition-colors duration-300`
+- Left: copyright line (see Copywriting Contract), `font-mono-label text-mono-label text-on-surface-variant` (per the Typography table's footer weight-collapse correction above — not `font-mono-code`)
+- Right: link row rendered from `site.socials` (D-03) — `flex gap-6 font-mono-label text-mono-label uppercase text-on-surface-variant` (same correction — not `font-mono-code`), each `<a>` uses `site.socials[i].href` and `site.socials[i].label` (not `.icon`; footer is text-style links, distinct from the Contact section's icon-circle treatment which is Phase 3 scope), hover `hover:text-primary-container transition-colors duration-300`
 
 ### Skip link (D-04)
 - Markup: `<a href="#main-content" class="skip-link">Pular para o conteúdo</a>` as the very first focusable element in `<body>`, before the nav
