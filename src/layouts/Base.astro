@@ -1,0 +1,30 @@
+---
+// Source: Arquivos de design/code.html lines 1-13 (head) and 220-224 (body wrapper),
+// adapted per 01-PATTERNS.md "src/layouts/Base.astro" section.
+//
+// Mandatory deviations from the prototype (SEC-01 / PROJECT.md PT-BR constraint):
+// - lang="pt-BR" (prototype used lang="en")
+// - No cdn.tailwindcss.com <script>, no Google Fonts <link>s, no Material Symbols
+//   icon-font <link>s, no <link rel="preconnect"> — every one of these is an
+//   external network origin and is dropped entirely, not just left unlinked.
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>{title}</title>
+  </head>
+  <body class="bg-background text-on-background bg-grid-pattern relative min-h-screen">
+    <div class="glow-cloud-top-right"></div>
+    <div class="glow-cloud-bottom-left"></div>
+    <slot />
+  </body>
+</html>
