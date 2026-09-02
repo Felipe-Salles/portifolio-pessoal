@@ -10,7 +10,7 @@
  * diffs it against this block plus the built CSS, so drift is caught
  * automatically rather than relying on human review of 47 hex values.
  */
-@theme {
+@theme static {
   /* ---------------------------------------------------------------------
    * Colors — DESIGN.md `colors:` block, 47 keys, dash-cased exactly as
    * written (never camelCased). code.html's tailwind.config.colors matches
@@ -151,4 +151,111 @@
   --radius-lg: 0.5rem;
   --radius-xl: 0.75rem;
   --radius-full: 9999px;
+}
+
+/*
+ * Custom CSS primitives ported from `Arquivos de design/code.html` lines
+ * 13-69 (the prototype's <style> block). These express visual behaviour
+ * (blurs, gradients, alpha composites) that Tailwind utility classes alone
+ * cannot — hence plain CSS classes rather than @theme tokens. Behaviour is
+ * ported verbatim; only the prototype's external-origin <head> tags
+ * (lines 7-12) are excluded, per SEC-01 (see 01-02-PLAN.md threat T-01-07).
+ *
+ * Where a value matches an existing @theme token exactly, the custom
+ * property is referenced instead of repeating the literal hex. Alpha
+ * composites (rgba fills/borders/shadows) have no token equivalent and are
+ * kept as literals, matching the prototype's exact values.
+ */
+
+/* Prototype body reset (code.html line 15). */
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Atmospheric Glows — large, soft cyan light-leaks (DESIGN.md "Atmospheric
+   Depth" / Z-Axis Hierarchy Level 1). Non-interactive, sit behind content. */
+.glow-cloud-top-right {
+  position: absolute;
+  top: -20vh;
+  right: -10vw;
+  width: 60vw;
+  height: 60vw;
+  background: radial-gradient(circle, rgba(0, 240, 255, 0.05) 0%, rgba(17, 20, 23, 0) 70%);
+  z-index: 0;
+  pointer-events: none;
+}
+.glow-cloud-bottom-left {
+  position: absolute;
+  bottom: -20vh;
+  left: -10vw;
+  width: 60vw;
+  height: 60vw;
+  background: radial-gradient(circle, rgba(0, 240, 255, 0.03) 0%, rgba(17, 20, 23, 0) 70%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Grid Background — DESIGN.md "Rigid Grid System" (Level 0 of the Z-Axis
+   Hierarchy). Reduces to a 32px grid on mobile per DESIGN.md "Mobile
+   Reflow" / LAY-01's "background grid reduzido". */
+.bg-grid-pattern {
+  background-size: 64px 64px;
+  background-image:
+    linear-gradient(to right, rgba(185, 202, 203, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(185, 202, 203, 0.03) 1px, transparent 1px);
+}
+@media (max-width: 768px) {
+  .bg-grid-pattern {
+    background-size: 32px 32px;
+  }
+}
+
+/* Glassmorphism — DESIGN.md "Elevation & Depth" (Level 2: glass cards with
+   thin borders). Only the unprefixed `backdrop-filter` is written by hand:
+   Tailwind v4's Lightning CSS-based build pipeline auto-generates the
+   `-webkit-backdrop-filter` twin for Safari from browser-target data.
+   Hand-writing both properties was tried and rejected — Lightning CSS's own
+   prefix-collapsing pass treats two identically-valued declarations for the
+   same logical feature as a redundant duplicate and silently drops
+   whichever was written FIRST in the rule, so hand-authoring both is not
+   reliable across builds (confirmed empirically: dist/ output kept only
+   one of the two regardless of which was written, until only the
+   unprefixed form was left for the autoprefixer to expand). */
+.glass-panel {
+  background: rgba(20, 27, 34, 0.6);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Cyan Glow Stroke — DESIGN.md "The Glow Stroke" (active/primary element
+   borders). Border color reuses the primary-container token; the glow
+   itself is an alpha composite with no token equivalent. */
+.border-glow-cyan {
+  border: 1px solid var(--color-primary-container);
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
+}
+
+/* Primary Button Hover — DESIGN.md "Components" (CTA hover glow +
+   brightness increase). Background reuses the primary-fixed token. */
+.btn-primary:hover {
+  box-shadow: 0 0 16px rgba(0, 240, 255, 0.6);
+  background-color: var(--color-primary-fixed);
+}
+
+/* Custom scrollbar (code.html lines 65-68) — all three colors are exact
+   solid-token matches, so they reference @theme custom properties. */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-surface);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-surface-container-highest);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-outline);
 }
