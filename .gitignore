@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Astro
+.astro/
+
+# Vercel
+.vercel/
+
+# Environment
+.env
+.env.production
+
+# Editor/OS
+.DS_Store
