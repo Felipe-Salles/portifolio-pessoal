@@ -1,6 +1,11 @@
 ---
-// Scaffolding — pipeline proof only. Replaced by the real page shell in Phase 2
-// (nav/layout) and Phase 3 (content sections).
+// Scaffolding — pipeline proof + token gallery only. Replaced by the real
+// page shell in Phase 2 (nav/layout) and Phase 3 (content sections).
+//
+// The gallery below is not a design comp — it exists purely so Tailwind v4
+// emits utility class *rules* (not just @theme custom properties) for a
+// representative class per token family, so the build-output assertions in
+// 01-02-PLAN.md Task 1/2 have something real to check against.
 import Base from "../layouts/Base.astro";
 import { Icon } from "astro-icon/components";
 ---
@@ -27,5 +32,16 @@ import { Icon } from "astro-icon/components";
     <p style="font-family: Lexend, sans-serif;">Lexend sample text</p>
     <p style="font-family: Inter, sans-serif;">Inter sample text</p>
     <p style="font-family: 'JetBrains Mono', monospace;">JetBrains Mono sample text</p>
+
+    <!-- Token gallery — one representative utility per @theme token family. -->
+    <div class="bg-surface-container border border-outline-variant px-margin-mobile gap-gutter max-w-container-max rounded">
+      <span class="text-on-surface-variant">on-surface-variant sample</span>
+      <p class="text-display-lg">Display LG</p>
+      <p class="text-headline-md">Headline MD</p>
+      <p class="text-body-md">Body MD</p>
+      <p class="text-mono-label font-mono-label">MONO LABEL</p>
+      <div class="rounded-lg">rounded-lg box</div>
+      <div class="rounded-full">rounded-full box</div>
+    </div>
   </main>
 </Base>

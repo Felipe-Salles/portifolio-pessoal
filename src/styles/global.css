@@ -1,1 +1,154 @@
 @import "tailwindcss";
+
+/*
+ * Source of truth: `Arquivos de design/DESIGN.md` frontmatter (canonical).
+ * Every custom property below is a 1:1 translation of a DESIGN.md token into
+ * Tailwind v4's CSS-first `@theme` namespaces. Values are copied verbatim —
+ * do not hand-tune anything here without updating DESIGN.md first.
+ *
+ * `scripts/verify-design-tokens.mjs` re-parses DESIGN.md on every run and
+ * diffs it against this block plus the built CSS, so drift is caught
+ * automatically rather than relying on human review of 47 hex values.
+ */
+@theme {
+  /* ---------------------------------------------------------------------
+   * Colors — DESIGN.md `colors:` block, 47 keys, dash-cased exactly as
+   * written (never camelCased). code.html's tailwind.config.colors matches
+   * this list key-for-key and value-for-value (01-PATTERNS.md cross-check).
+   * --------------------------------------------------------------------- */
+  --color-surface: #111417;
+  --color-surface-dim: #111417;
+  --color-surface-bright: #37393d;
+  --color-surface-container-lowest: #0c0e12;
+  --color-surface-container-low: #191c1f;
+  --color-surface-container: #1d2023;
+  --color-surface-container-high: #282a2e;
+  --color-surface-container-highest: #323539;
+  --color-on-surface: #e1e2e7;
+  --color-on-surface-variant: #b9cacb;
+  --color-inverse-surface: #e1e2e7;
+  --color-inverse-on-surface: #2e3134;
+  --color-outline: #849495;
+  --color-outline-variant: #3b494b;
+  --color-surface-tint: #00dbe9;
+  --color-primary: #dbfcff;
+  --color-on-primary: #00363a;
+  --color-primary-container: #00f0ff;
+  --color-on-primary-container: #006970;
+  --color-inverse-primary: #006970;
+  --color-secondary: #c2c7ce;
+  --color-on-secondary: #2c3137;
+  --color-secondary-container: #42474d;
+  --color-on-secondary-container: #b1b5bc;
+  --color-tertiary: #f1f6ff;
+  --color-on-tertiary: #2a3139;
+  --color-tertiary-container: #d3dae4;
+  --color-on-tertiary-container: #585f68;
+  /* error/on-error pair retained for palette completeness only — no
+     destructive action exists in v1 scope (see 01-02-PLAN.md constraints). */
+  --color-error: #ffb4ab;
+  --color-on-error: #690005;
+  --color-error-container: #93000a;
+  --color-on-error-container: #ffdad6;
+  --color-primary-fixed: #7df4ff;
+  --color-primary-fixed-dim: #00dbe9;
+  --color-on-primary-fixed: #002022;
+  --color-on-primary-fixed-variant: #004f54;
+  --color-secondary-fixed: #dee3ea;
+  --color-secondary-fixed-dim: #c2c7ce;
+  --color-on-secondary-fixed: #171c21;
+  --color-on-secondary-fixed-variant: #42474d;
+  --color-tertiary-fixed: #dce3ed;
+  --color-tertiary-fixed-dim: #c0c7d1;
+  --color-on-tertiary-fixed: #151c23;
+  --color-on-tertiary-fixed-variant: #40474f;
+  --color-background: #111417;
+  --color-on-background: #e1e2e7;
+  --color-surface-variant: #323539;
+
+  /* ---------------------------------------------------------------------
+   * Typography — 7 named roles from DESIGN.md `typography:` block.
+   * Each role gets a family (--font-{role}) plus the double-hyphen
+   * modifier form (--text-{role}, --text-{role}--line-height,
+   * --text-{role}--letter-spacing, --text-{role}--font-weight) so that
+   * `text-{role}` applies size + line-height + letter-spacing + weight
+   * together — NOT the Tailwind v3 tuple syntax, which has no meaning in a
+   * CSS-first @theme block (RESEARCH.md Pitfall 4).
+   * letter-spacing is emitted only for the 4 roles DESIGN.md declares it
+   * for (display-lg, display-lg-mobile, headline-md, mono-label).
+   * --------------------------------------------------------------------- */
+  --font-display-lg: "Lexend", sans-serif;
+  --text-display-lg: 72px;
+  --text-display-lg--line-height: 80px;
+  --text-display-lg--letter-spacing: -0.02em;
+  --text-display-lg--font-weight: 700;
+
+  --font-display-lg-mobile: "Lexend", sans-serif;
+  --text-display-lg-mobile: 40px;
+  --text-display-lg-mobile--line-height: 48px;
+  --text-display-lg-mobile--letter-spacing: -0.02em;
+  --text-display-lg-mobile--font-weight: 700;
+
+  --font-headline-md: "Lexend", sans-serif;
+  --text-headline-md: 32px;
+  --text-headline-md--line-height: 40px;
+  --text-headline-md--letter-spacing: -0.01em;
+  --text-headline-md--font-weight: 600;
+
+  --font-body-lg: "Inter", sans-serif;
+  --text-body-lg: 18px;
+  --text-body-lg--line-height: 28px;
+  --text-body-lg--font-weight: 400;
+
+  --font-body-md: "Inter", sans-serif;
+  --text-body-md: 16px;
+  --text-body-md--line-height: 24px;
+  --text-body-md--font-weight: 400;
+
+  --font-mono-label: "JetBrains Mono", monospace;
+  --text-mono-label: 14px;
+  --text-mono-label--line-height: 20px;
+  --text-mono-label--letter-spacing: 0.05em;
+  --text-mono-label--font-weight: 500;
+
+  --font-mono-code: "JetBrains Mono", monospace;
+  --text-mono-code: 13px;
+  --text-mono-code--line-height: 20px;
+  --text-mono-code--font-weight: 400;
+
+  /* ---------------------------------------------------------------------
+   * Spacing — DESIGN.md `spacing:` block. Tailwind's default 4px-increment
+   * scale remains available; these named tokens are additive.
+   * --------------------------------------------------------------------- */
+  --spacing-unit: 8px;
+  --spacing-gutter: 24px;
+  --spacing-margin-mobile: 20px;
+  --spacing-section-gap: 160px;
+  /* container-max is a max-width value filed under DESIGN.md's `spacing:`
+     block — kept here too (as --spacing-container-max) purely so the token
+     fidelity gate can assert every `spacing:` key 1:1 against DESIGN.md. */
+  --spacing-container-max: 1280px;
+  /* The UI-SPEC-contracted `max-w-container-max` utility resolves from
+     Tailwind v4's --container-* namespace, not --spacing-* (confirmed
+     empirically against node_modules/tailwindcss/theme.css, which defines
+     --container-{xs..7xl} for the built-in max-w-* scale). This entry is
+     the one that actually makes `max-w-container-max` compile. */
+  --container-container-max: 1280px;
+
+  /* ---------------------------------------------------------------------
+   * Radius — DESIGN.md `rounded:` block (canonical over code.html's
+   * divergent borderRadius object, which has an erroneous full: 0.75rem —
+   * see 01-02-PLAN.md <source_of_truth>).
+   * The bare `rounded` utility reads the unsuffixed --radius property, not
+   * --radius-DEFAULT — confirmed empirically: node_modules/tailwindcss/
+   * theme.css defines a "Deprecated" back-compat `--radius: 0.25rem;`
+   * alias (not --radius-DEFAULT) that the bare `rounded` utility resolves
+   * from.
+   * --------------------------------------------------------------------- */
+  --radius-sm: 0.125rem;
+  --radius: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-full: 9999px;
+}
