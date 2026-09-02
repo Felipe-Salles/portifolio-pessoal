@@ -432,17 +432,17 @@ See Architecture Patterns above (Patterns 1–5) — all five are verified, read
 
 **If confirmed wrong:** Both assumptions fail fast and loudly at build time (never silently ship wrong behavior), so no additional human-verification checkpoint is strictly required before implementation — but the planner may still want a quick manual glyph-name sanity check against `icon-sets.iconify.design/material-symbols` before finalizing Phase 2/3 icon-consuming tasks, since A1 spans into those phases.
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Should `@astrojs/vercel` be installed in this phase even though it isn't strictly required until Phase 5?**
    - What we know: Phase 1's 3 success criteria (zero external origins, tokens wired, one schema validates) don't require an adapter at all — `output: 'static'` with no adapter still builds and previews fine locally.
    - What's unclear: Whether the project owner wants deploy-target wiring done incrementally per-phase (this research's recommendation) or established once, early, to avoid touching `astro.config.mjs` again later.
-   - Recommendation: Defer to Phase 5, per `REQUIREMENTS.md`'s own traceability table (SEC-02/03, DEPLOY-01/02 → Phase 5). Keeps this phase's dependency footprint and verification story minimal, consistent with `mode: mvp` / `granularity: coarse`.
+   - RESOLVED: Defer to Phase 5, per `REQUIREMENTS.md`'s own traceability table (SEC-02/03, DEPLOY-01/02 → Phase 5). Keeps this phase's dependency footprint and verification story minimal, consistent with `mode: mvp` / `granularity: coarse`. Confirmed applied — 01-01-PLAN.md does not install `@astrojs/vercel`.
 
 2. **Package manager choice (npm/pnpm/yarn) for `npm create astro@latest` scaffolding.**
    - What we know: `01-CONTEXT.md` explicitly delegates "package manager and other purely technical setup choices" to Claude's discretion. This machine has npm `11.13.0` available and working; no pnpm/yarn was probed.
    - What's unclear: No stated preference either way.
-   - Recommendation: Default to npm (already verified present, matches all `npm view` commands used throughout this research, zero extra setup).
+   - RESOLVED: Default to npm (already verified present, matches all `npm view` commands used throughout this research, zero extra setup). Confirmed applied — all three plans use npm throughout.
 
 ## Environment Availability
 
