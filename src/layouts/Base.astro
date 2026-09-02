@@ -9,6 +9,24 @@
 //   external network origin and is dropped entirely, not just left unlinked.
 import "../styles/global.css";
 
+// Self-hosted font weights (D-01) — per-weight imports only. A bare
+// package-root import (no /{weight}.css suffix) silently loads weight 400
+// only (RESEARCH.md Pitfall 5), so every weight DESIGN.md requires is
+// imported explicitly. Weights confirmed from code.html line 11's Google
+// Fonts query string.
+import "@fontsource/inter/400.css";
+import "@fontsource/inter/500.css";
+import "@fontsource/inter/600.css";
+import "@fontsource/inter/700.css";
+import "@fontsource/lexend/400.css";
+import "@fontsource/lexend/500.css";
+import "@fontsource/lexend/600.css";
+import "@fontsource/lexend/700.css";
+import "@fontsource/lexend/800.css";
+import "@fontsource/jetbrains-mono/400.css";
+import "@fontsource/jetbrains-mono/500.css";
+import "@fontsource/jetbrains-mono/700.css";
+
 interface Props {
   title: string;
 }

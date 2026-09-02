@@ -2,10 +2,30 @@
 // Scaffolding — pipeline proof only. Replaced by the real page shell in Phase 2
 // (nav/layout) and Phase 3 (content sections).
 import Base from "../layouts/Base.astro";
+import { Icon } from "astro-icon/components";
 ---
 
 <Base title="PIPELINE OK — Portfólio Dev">
   <main>
     <h1>PIPELINE OK</h1>
+
+    <!-- Icon self-hosting proof: all 7 required Material Symbols glyphs,
+         base names only — none of them has a "-outline" variant needed here
+         (RESEARCH.md Pattern 4 / Assumptions Log A1). -->
+    <p>
+      <Icon name="material-symbols:menu" />
+      <Icon name="material-symbols:arrow-forward" />
+      <Icon name="material-symbols:open-in-new" />
+      <Icon name="material-symbols:code" />
+      <Icon name="material-symbols:work" />
+      <Icon name="material-symbols:mail" />
+      <Icon name="material-symbols:chat" />
+    </p>
+
+    <!-- Font self-hosting proof: forces the built CSS to include @font-face
+         rules for all three self-hosted families. -->
+    <p style="font-family: Lexend, sans-serif;">Lexend sample text</p>
+    <p style="font-family: Inter, sans-serif;">Inter sample text</p>
+    <p style="font-family: 'JetBrains Mono', monospace;">JetBrains Mono sample text</p>
   </main>
 </Base>
