@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 1 UI-SPEC approved
-last_updated: "2026-09-02T20:28:58.878Z"
-last_activity: 2026-09-02 -- Phase 01 planning complete
+stopped_at: Completed 01-01-PLAN.md
+last_updated: "2026-09-02T22:26:05.257Z"
+last_activity: 2026-09-02
 progress:
   total_phases: 5
   completed_phases: 0
   total_plans: 3
-  completed_plans: 0
+  completed_plans: 1
   percent: 0
 ---
 
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-09-02)
 
 **Core value:** Um visitante consegue em poucos segundos entender quem é o dono do site, quais tecnologias domina, e ver projetos reais que provam isso — com o site carregando rápido e passando confiança técnica.
-**Current focus:** Phase 1 — Foundation & Design System
+**Current focus:** Phase 01 — foundation-design-system
 
 ## Current Position
 
-Phase: 1 of 5 (Foundation & Design System)
-Plan: TBD (not yet planned)
+Phase: 01 (foundation-design-system) — EXECUTING
+Plan: 2 of 3
 Status: Ready to execute
-Last activity: 2026-09-02 -- Phase 01 planning complete
+Last activity: 2026-09-02
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [███░░░░░░░] 33%
 
 ## Performance Metrics
 
@@ -52,6 +52,7 @@ Progress: [░░░░░░░░░░] 0%
 - Trend: -
 
 *Updated after each plan completion*
+| Phase 01 P01 | 30min | 3 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -62,6 +63,9 @@ Recent decisions affecting current work:
 
 - Roadmap: Security header work (SEC-01, self-hosted origins) split from SEC-02/03/04 — SEC-01 lands structurally in Phase 1 (Foundation) since it constrains every later component; SEC-02/03/04 (headers, audit) land in Phase 5 once component structure is stable.
 - Roadmap: LAY-02 (full visual fidelity to prototype) assigned to Phase 3 (Content Sections) since it can only be verified once all sections exist.
+- [Phase 01-01]: TypeScript pinned to ^6.0.3 (not npm latest 7.0.2) — outside @astrojs/check's peer range — npm latest is 7.0.2 which falls outside @astrojs/check@0.9.10's peer range ^5.0.0 || ^6.0.0, confirmed live at execution time
+- [Phase 01-01]: SEC-01 enforced by a deterministic dist/ scan, not manual DevTools inspection — Catches bare rel=preconnect tags (external DNS/TCP handshake) that a Network-tab visual scan misses
+- [Phase 01-01]: All 7 required Material Symbols glyphs use base names, no -outline suffix — Confirmed via live Iconify search in RESEARCH.md — 4 glyphs have no outline variant at all, and the 3 that do map base-name=filled per Iconify convention, matching the prototype's FILL 1 usage
 
 ### Pending Todos
 
@@ -81,7 +85,7 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-09-02T19:55:56.470Z
-Stopped at: Phase 1 UI-SPEC approved
-Resume file: .planning/phases/01-foundation-design-system/01-UI-SPEC.md
+Last session: 2026-09-02T22:26:05.125Z
+Stopped at: Completed 01-01-PLAN.md
+Resume file: None
 </content>

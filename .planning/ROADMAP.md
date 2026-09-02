@@ -30,7 +30,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. DESIGN.md tokens (color palette, typography scale, spacing) are wired into Tailwind's `@theme` config and usable by any component
   3. A placeholder project entry validates successfully against the Astro Content Collection schema, confirming the data shape before any UI is built
 **Plans**: 3 plans (2 waves)
-- [ ] 01-01-PLAN.md — Walking Skeleton: Astro build pipeline with self-hosted fonts/icons and the automated SEC-01 zero-external-origin gate
+- [x] 01-01-PLAN.md — Walking Skeleton: Astro build pipeline with self-hosted fonts/icons and the automated SEC-01 zero-external-origin gate
 - [ ] 01-02-PLAN.md — DESIGN.md tokens wired into Tailwind v4 `@theme`, prototype CSS primitives, and an automated token-fidelity gate
 - [ ] 01-03-PLAN.md — `projects` Content Collection schema with a validated placeholder entry, plus the typed `site.ts` singleton
 **UI hint**: yes
@@ -95,7 +95,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Design System | 0/3 | Planned | - |
+| 1. Foundation & Design System | 1/3 | In Progress|  |
 | 2. Layout & Navigation Shell | 0/TBD | Not started | - |
 | 3. Content Sections | 0/TBD | Not started | - |
 | 4. SEO, Accessibility & Polish | 0/TBD | Not started | - |

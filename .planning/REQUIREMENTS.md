@@ -57,7 +57,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Segurança
 
-- [ ] **SEC-01**: Site não carrega nenhuma origem externa de script/fonte/ícone (Tailwind, fontes e ícones compilados/self-hosted no build)
+- [x] **SEC-01**: Site não carrega nenhuma origem externa de script/fonte/ícone (Tailwind, fontes e ícones compilados/self-hosted no build)
 - [ ] **SEC-02**: Site envia CSP restritiva (`default-src 'self'` ou equivalente) via header HTTP real, verificada na URL de produção
 - [ ] **SEC-03**: Site envia HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy e Permissions-Policy via `vercel.json`
 - [ ] **SEC-04**: Nenhum segredo/API key exposto no client; `npm audit` sem vulnerabilidades conhecidas antes do deploy
@@ -130,7 +130,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | A11Y-02 | Phase 4 | Pending |
 | A11Y-03 | Phase 4 | Pending |
 | A11Y-04 | Phase 4 | Pending |
-| SEC-01 | Phase 1 | Pending |
+| SEC-01 | Phase 1 | Complete |
 | SEC-02 | Phase 5 | Pending |
 | SEC-03 | Phase 5 | Pending |
 | SEC-04 | Phase 5 | Pending |
