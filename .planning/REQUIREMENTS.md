@@ -106,42 +106,43 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| HERO-01 | TBD | Pending |
-| HERO-02 | TBD | Pending |
-| DOSS-01 | TBD | Pending |
-| DOSS-02 | TBD | Pending |
-| TECH-01 | TBD | Pending |
-| TECH-02 | TBD | Pending |
-| PROJ-01 | TBD | Pending |
-| PROJ-02 | TBD | Pending |
-| PROJ-03 | TBD | Pending |
-| PROJ-04 | TBD | Pending |
-| CONT-01 | TBD | Pending |
-| LAY-01 | TBD | Pending |
-| LAY-02 | TBD | Pending |
-| LAY-03 | TBD | Pending |
-| SEO-01 | TBD | Pending |
-| SEO-02 | TBD | Pending |
-| SEO-03 | TBD | Pending |
-| SEO-04 | TBD | Pending |
-| SEO-05 | TBD | Pending |
-| SEO-06 | TBD | Pending |
-| A11Y-01 | TBD | Pending |
-| A11Y-02 | TBD | Pending |
-| A11Y-03 | TBD | Pending |
-| A11Y-04 | TBD | Pending |
-| SEC-01 | TBD | Pending |
-| SEC-02 | TBD | Pending |
-| SEC-03 | TBD | Pending |
-| SEC-04 | TBD | Pending |
-| DEPLOY-01 | TBD | Pending |
-| DEPLOY-02 | TBD | Pending |
+| HERO-01 | Phase 3 | Pending |
+| HERO-02 | Phase 3 | Pending |
+| DOSS-01 | Phase 3 | Pending |
+| DOSS-02 | Phase 3 | Pending |
+| TECH-01 | Phase 3 | Pending |
+| TECH-02 | Phase 3 | Pending |
+| PROJ-01 | Phase 3 | Pending |
+| PROJ-02 | Phase 3 | Pending |
+| PROJ-03 | Phase 3 | Pending |
+| PROJ-04 | Phase 3 | Pending |
+| CONT-01 | Phase 3 | Pending |
+| LAY-01 | Phase 3 | Pending |
+| LAY-02 | Phase 3 | Pending |
+| LAY-03 | Phase 2 | Pending |
+| SEO-01 | Phase 4 | Pending |
+| SEO-02 | Phase 4 | Pending |
+| SEO-03 | Phase 4 | Pending |
+| SEO-04 | Phase 4 | Pending |
+| SEO-05 | Phase 4 | Pending |
+| SEO-06 | Phase 2 | Pending |
+| A11Y-01 | Phase 2 | Pending |
+| A11Y-02 | Phase 4 | Pending |
+| A11Y-03 | Phase 4 | Pending |
+| A11Y-04 | Phase 4 | Pending |
+| SEC-01 | Phase 1 | Pending |
+| SEC-02 | Phase 5 | Pending |
+| SEC-03 | Phase 5 | Pending |
+| SEC-04 | Phase 5 | Pending |
+| DEPLOY-01 | Phase 5 | Pending |
+| DEPLOY-02 | Phase 5 | Pending |
 
 **Coverage:**
 - v1 requirements: 30 total
-- Mapped to phases: 0 (pending roadmap creation)
-- Unmapped: 30 ⚠️ (resolved by roadmapper)
+- Mapped to phases: 30 (100%)
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-09-02*
-*Last updated: 2026-09-02 after initial definition*
+*Last updated: 2026-09-02 after roadmap creation (5 phases, 100% coverage)*
+</content>
