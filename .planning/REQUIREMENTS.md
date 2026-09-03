@@ -46,7 +46,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **SEO-03**: Site gera `sitemap.xml` via `@astrojs/sitemap`
 - [ ] **SEO-04**: Site tem `robots.txt` permitindo indexação
 - [ ] **SEO-05**: Site tem favicon seguindo a paleta Cyber-Sophisticate
-- [ ] **SEO-06**: HTML declara `lang="pt-BR"` corretamente (não copiado do `lang="en"` do protótipo)
+- [x] **SEO-06**: HTML declara `lang="pt-BR"` corretamente (não copiado do `lang="en"` do protótipo)
 
 ### Acessibilidade
 
@@ -125,7 +125,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SEO-03 | Phase 4 | Pending |
 | SEO-04 | Phase 4 | Pending |
 | SEO-05 | Phase 4 | Pending |
-| SEO-06 | Phase 2 | Pending |
+| SEO-06 | Phase 2 | Complete |
 | A11Y-01 | Phase 2 | Complete |
 | A11Y-02 | Phase 4 | Pending |
 | A11Y-03 | Phase 4 | Pending |
