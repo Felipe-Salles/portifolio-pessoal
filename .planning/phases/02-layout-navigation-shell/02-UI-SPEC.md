@@ -1,7 +1,7 @@
 ---
 phase: 2
 slug: layout-navigation-shell
-status: draft
+status: approved
 shadcn_initialized: false
 preset: none
 created: 2026-09-02
@@ -187,11 +187,11 @@ No third-party registries declared. No vetting gate required.
 
 ## Checker Sign-Off
 
-- [ ] Dimension 1 Copywriting: PASS
-- [ ] Dimension 2 Visuals: PASS
-- [ ] Dimension 3 Color: PASS
-- [ ] Dimension 4 Typography: PASS
-- [ ] Dimension 5 Spacing: PASS
-- [ ] Dimension 6 Registry Safety: PASS
+- [x] Dimension 1 Copywriting: FLAG (non-blocking — "Connect" CTA is single-word but justified as locked design-system vocabulary)
+- [x] Dimension 2 Visuals: PASS
+- [x] Dimension 3 Color: PASS
+- [x] Dimension 4 Typography: PASS (revised — collapsed from 3 to 2 font weights)
+- [x] Dimension 5 Spacing: PASS
+- [x] Dimension 6 Registry Safety: PASS
 
-**Approval:** pending
+**Approval:** approved (2026-09-02, after one revision cycle for Dimension 4)
