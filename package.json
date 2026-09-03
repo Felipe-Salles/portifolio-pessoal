@@ -14,8 +14,9 @@
     "verify:sec01": "node scripts/verify-no-external-origins.mjs",
     "verify:tokens": "node scripts/verify-design-tokens.mjs",
     "verify:shell": "node scripts/verify-shell.mjs",
+    "verify:sections": "node scripts/verify-sections.mjs",
     "verify:schema": "node scripts/verify-content-schema.mjs",
-    "verify": "npm run build && npm run verify:sec01 && npm run verify:tokens && npm run verify:shell && npm run verify:schema"
+    "verify": "npm run build && npm run verify:sec01 && npm run verify:tokens && npm run verify:shell && npm run verify:sections && npm run verify:schema"
   },
   "dependencies": {
     "@fontsource/inter": "^5.3.0",
