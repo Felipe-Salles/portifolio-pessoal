@@ -79,7 +79,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   5. Lighthouse/axe report no contrast violations on the real rendered glassmorphism panels, with focus states remaining visible
 **Plans**: 5 plans (5 waves)
 - [x] 04-01-PLAN.md — Toolchain + `site` URL, sitemap/robots, the `>_` favicon set, and `Base.astro`'s head metadata contract with the decorative `aria-hidden` pass
-- [ ] 04-02-PLAN.md — Custom 404 page and the Playwright-generated 1200×630 Open Graph share image from an internal `noindex` template route
+- [x] 04-02-PLAN.md — Custom 404 page and the Playwright-generated 1200×630 Open Graph share image from an internal `noindex` template route
 - [ ] 04-03-PLAN.md — `scripts/verify-seo.mjs` gate proving SEO-01..05 against real build output, wired into `npm run verify`
 - [ ] 04-04-PLAN.md — `scripts/verify-a11y.mjs` gate: real-browser axe WCAG 2 AA scan plus pixel-sampled glass-panel contrast triage
 - [ ] 04-05-PLAN.md — Blocking human sign-off on the favicon, share image, and 404 page in a real browser
@@ -106,6 +106,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 1. Foundation & Design System | 3/3 | Complete   | 2026-09-02 |
 | 2. Layout & Navigation Shell | 3/3 | Complete   | 2026-09-03 |
 | 3. Content Sections | 3/3 | Complete   | 2026-09-03 |
-| 4. SEO, Accessibility & Polish | 1/5 | In Progress|  |
+| 4. SEO, Accessibility & Polish | 2/5 | In Progress|  |
 | 5. Security Hardening & Deploy | 0/TBD | Not started | - |
 </content>
