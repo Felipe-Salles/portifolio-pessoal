@@ -24,10 +24,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Projects
 
-- [ ] **PROJ-01**: Visitante navega por uma seção de Projetos com cards renderizados a partir de uma Astro Content Collection
-- [ ] **PROJ-02**: Cada card de projeto exibe nome, descrição, tags de tecnologia e link(s) live/repo quando existirem (placeholder entries no v1)
-- [ ] **PROJ-03**: Links externos de projetos (live/repo) usam `rel="noopener noreferrer"`
-- [ ] **PROJ-04**: Imagens de capa dos projetos são otimizadas via `astro:assets` (não servidas cruas de `public/`)
+- [x] **PROJ-01**: Visitante navega por uma seção de Projetos com cards renderizados a partir de uma Astro Content Collection
+- [x] **PROJ-02**: Cada card de projeto exibe nome, descrição, tags de tecnologia e link(s) live/repo quando existirem (placeholder entries no v1)
+- [x] **PROJ-03**: Links externos de projetos (live/repo) usam `rel="noopener noreferrer"`
+- [x] **PROJ-04**: Imagens de capa dos projetos são otimizadas via `astro:assets` (não servidas cruas de `public/`)
 
 ### Contact
 
@@ -35,8 +35,8 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Layout & Design Fidelity
 
-- [ ] **LAY-01**: Site é responsivo, com reflow mobile conforme DESIGN.md (margens 20px, grid adaptativo, background grid reduzido)
-- [ ] **LAY-02**: Visual do site corresponde fielmente aos tokens do DESIGN.md (cores, tipografia, espaçamento, componentes) e ao protótipo em `screen.png`
+- [x] **LAY-01**: Site é responsivo, com reflow mobile conforme DESIGN.md (margens 20px, grid adaptativo, background grid reduzido)
+- [x] **LAY-02**: Visual do site corresponde fielmente aos tokens do DESIGN.md (cores, tipografia, espaçamento, componentes) e ao protótipo em `screen.png`
 - [x] **LAY-03**: Navegação (Nav) inclui logo, links das seções e botão "Connect", com toggle mobile funcional sem framework JS
 
 ### SEO & Descoberta
@@ -112,13 +112,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DOSS-02 | Phase 3 | Complete |
 | TECH-01 | Phase 3 | Complete |
 | TECH-02 | Phase 3 | Complete |
-| PROJ-01 | Phase 3 | Pending |
-| PROJ-02 | Phase 3 | Pending |
-| PROJ-03 | Phase 3 | Pending |
-| PROJ-04 | Phase 3 | Pending |
+| PROJ-01 | Phase 3 | Complete |
+| PROJ-02 | Phase 3 | Complete |
+| PROJ-03 | Phase 3 | Complete |
+| PROJ-04 | Phase 3 | Complete |
 | CONT-01 | Phase 3 | Complete |
-| LAY-01 | Phase 3 | Pending |
-| LAY-02 | Phase 3 | Pending |
+| LAY-01 | Phase 3 | Complete |
+| LAY-02 | Phase 3 | Complete |
 | LAY-03 | Phase 2 | Complete |
 | SEO-01 | Phase 4 | Pending |
 | SEO-02 | Phase 4 | Pending |

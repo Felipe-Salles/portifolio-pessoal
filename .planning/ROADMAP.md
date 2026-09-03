@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation & Design System** - Secure, self-hosted build pipeline and design tokens with zero external script/font/icon origins (completed 2026-09-02)
 - [x] **Phase 2: Layout & Navigation Shell** - Shared nav/footer/page shell matching the design system, in PT-BR, fully keyboard-accessible (completed 2026-09-03)
-- [ ] **Phase 3: Content Sections** - Hero, Dossier, Tech Stack, Projects, and Contact sections rendered and responsive per the prototype
+- [x] **Phase 3: Content Sections** - Hero, Dossier, Tech Stack, Projects, and Contact sections rendered and responsive per the prototype (completed 2026-09-03)
 - [ ] **Phase 4: SEO, Accessibility & Polish** - Discoverability, share previews, custom 404, and accessibility verification
 - [ ] **Phase 5: Security Hardening & Deploy** - Production security headers verified live on Vercel over HTTPS
 
@@ -63,7 +63,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 3 plans (3 waves)
 - [x] 03-01-PLAN.md — Page container wrapper on `<main>`, Hero and Dossier sections, and the new Phase 3 sections gate
 - [x] 03-02-PLAN.md — Tech Stack badge grid and the Contact panel, plus the `contactHeading`/`contactSubtitle` fields in `site.ts`
-- [ ] 03-03-PLAN.md — Projects grid from the Content Collection, the gradient-fallback hover primitive, and the closing fidelity/responsiveness verification
+- [x] 03-03-PLAN.md — Projects grid from the Content Collection, the gradient-fallback hover primitive, and the closing fidelity/responsiveness verification
 **UI hint**: yes
 
 ### Phase 4: SEO, Accessibility & Polish
@@ -100,6 +100,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 |-------|----------------|--------|-----------|
 | 1. Foundation & Design System | 3/3 | Complete   | 2026-09-02 |
 | 2. Layout & Navigation Shell | 3/3 | Complete   | 2026-09-03 |
-| 3. Content Sections | 2/3 | In Progress|  |
+| 3. Content Sections | 3/3 | Complete   | 2026-09-03 |
 | 4. SEO, Accessibility & Polish | 0/TBD | Not started | - |
 | 5. Security Hardening & Deploy | 0/TBD | Not started | - |
