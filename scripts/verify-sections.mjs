@@ -62,6 +62,18 @@ for (const f of cssFiles) {
 // Whitespace-stripped copy for all CSS assertions — Lightning CSS minifies output.
 const cssStripped = css.replace(/\s+/g, "");
 
+// Whitespace-collapsed (not fully stripped) copy, mirroring
+// scripts/verify-shell.mjs's technique. Unlike cssStripped, this preserves
+// the single space of a descendant combinator (e.g.
+// `.group:hover .cover-fallback`), which cssStripped would otherwise
+// collapse into what looks like a single compound selector. Added in plan
+// 03-03 — no earlier group in this gate needed a descendant-combinator CSS
+// selector assertion.
+const cssLoose = css
+  .replace(/\s+/g, " ")
+  .replace(/\s*([{};,])\s*/g, "$1")
+  .trim();
+
 const violations = [];
 function addViolation(group, detail) {
   violations.push({ group, detail });
@@ -94,6 +106,22 @@ function extractElementInner(source, openTagEndIdx, tagName) {
     }
   }
   return null;
+}
+
+/** Find the declaration block for `selectorRegexStr` in `source` and return
+ * its captured text, or null if no match. Tolerates minifiers (e.g.
+ * Lightning CSS) grouping multiple identical-declaration selectors into a
+ * comma-separated selector list — mirrors scripts/verify-shell.mjs's helper
+ * of the same name. */
+function findCssBlock(source, selectorRegexStr) {
+  const re = new RegExp(`${selectorRegexStr}\\s*[,{]`);
+  const m = re.exec(source);
+  if (!m) return null;
+  const braceIdx = source.indexOf("{", m.index);
+  if (braceIdx === -1) return null;
+  const closeIdx = source.indexOf("}", braceIdx);
+  if (closeIdx === -1) return null;
+  return source.slice(braceIdx + 1, closeIdx);
 }
 
 // -----------------------------------------------------------------------
@@ -264,6 +292,60 @@ const parsed = parseSiteTs();
 if (!parsed) {
   addViolation("container", "could not parse src/data/site.ts");
 }
+
+// -----------------------------------------------------------------------
+// Projects collection parser (PROJ-01 through PROJ-04) — lists every .md
+// file under src/content/projects/ and parses its YAML frontmatter at gate
+// runtime, rather than hardcoding today's single placeholder entry, so the
+// gate keeps working once v2's REAL-02 adds real entries.
+//
+// Note: scripts/verify-content-schema.mjs deliberately creates and removes
+// a temporarily-invalid entry during its own run, so this gate must be read
+// as a snapshot of whatever is on disk when it runs, not as a fixed count.
+// -----------------------------------------------------------------------
+function yamlScalar(text, field) {
+  const re = new RegExp(`^${field}:\\s*["']([^"']*)["']\\s*$`, "m");
+  const m = re.exec(text);
+  return m ? m[1] : null;
+}
+
+function yamlArray(text, field) {
+  const keyIdx = text.search(new RegExp(`^${field}:`, "m"));
+  if (keyIdx === -1) return null;
+  const arrStart = text.indexOf("[", keyIdx);
+  if (arrStart === -1) return null;
+  const arrEnd = text.indexOf("]", arrStart);
+  if (arrEnd === -1) return null;
+  const slice = text.slice(arrStart, arrEnd + 1);
+  return [...slice.matchAll(/["']([^"']*)["']/g)].map((m) => m[1]);
+}
+
+function parseProjectsCollection() {
+  const projectsDir = join("src", "content", "projects");
+  if (!existsSync(projectsDir)) return [];
+  const files = readdirSync(projectsDir).filter((f) => f.endsWith(".md"));
+  const entries = [];
+  for (const file of files) {
+    const text = readFileSync(join(projectsDir, file), "utf8");
+    const fmMatch = /^---\r?\n([\s\S]*?)\r?\n---/.exec(text);
+    if (!fmMatch) continue;
+    const fm = fmMatch[1];
+    entries.push({
+      file,
+      title: yamlScalar(fm, "title"),
+      description: yamlScalar(fm, "description"),
+      tags: yamlArray(fm, "tags") || [],
+      hasLiveUrl: /^liveUrl:/m.test(fm),
+      hasRepoUrl: /^repoUrl:/m.test(fm),
+      hasCoverImage: /^coverImage:/m.test(fm),
+      hasFeatured: /^featured:/m.test(fm),
+      hasOrder: /^order:/m.test(fm),
+    });
+  }
+  return entries;
+}
+
+const projectEntries = parseProjectsCollection();
 
 const baseAstroPath = join("src", "layouts", "Base.astro");
 const baseAstroSrc = existsSync(baseAstroPath)
@@ -1001,6 +1083,441 @@ if (indexAstroSrc) {
 }
 
 // -----------------------------------------------------------------------
+// Check group: projects (PROJ-01 through PROJ-04, D-05 through D-09)
+// -----------------------------------------------------------------------
+let projectsOk = true;
+
+const projectsIdMatches = html.match(/id="projects"/g) || [];
+let projectsInner = null;
+if (projectsIdMatches.length !== 1) {
+  projectsOk = false;
+  addViolation(
+    "projects",
+    `expected exactly one id="projects" element, found ${projectsIdMatches.length}`
+  );
+} else {
+  const projectsTagRegex = /<([a-z0-9]+)\b[^>]*\bid="projects"[^>]*>/i;
+  const projectsTagMatch = projectsTagRegex.exec(html);
+  if (!projectsTagMatch) {
+    projectsOk = false;
+    addViolation("projects", 'could not locate the opening tag carrying id="projects"');
+  } else {
+    const projectsTagName = projectsTagMatch[1];
+    if (projectsTagName.toLowerCase() !== "section") {
+      projectsOk = false;
+      addViolation("projects", `id="projects" element must be a <section>, found <${projectsTagName}>`);
+    }
+    if (!projectsTagMatch[0].includes("scroll-mt-32")) {
+      projectsOk = false;
+      addViolation("projects", 'id="projects" element missing scroll-mt-32 class');
+    }
+
+    const projectsOpenEndIdx = projectsTagMatch.index + projectsTagMatch[0].length;
+    projectsInner = extractElementInner(html, projectsOpenEndIdx, projectsTagName);
+    if (projectsInner === null) {
+      projectsOk = false;
+      addViolation("projects", "could not extract the projects section's inner markup");
+    } else {
+      const h2Match = /<h2\b[^>]*>([\s\S]*?)<\/h2>/i.exec(projectsInner);
+      if (!h2Match || h2Match[1].trim() !== "PROJECTS") {
+        projectsOk = false;
+        addViolation("projects", '<h2> with trimmed text "PROJECTS" not found');
+      }
+
+      if (!/grid-cols-1/.test(projectsInner) || !/md:grid-cols-3/.test(projectsInner)) {
+        projectsOk = false;
+        addViolation("projects", "grid wrapper missing grid-cols-1 and/or md:grid-cols-3 (D-05)");
+      }
+
+      const articleCount = (projectsInner.match(/<article\b/gi) || []).length;
+      if (articleCount !== projectEntries.length) {
+        projectsOk = false;
+        addViolation(
+          "projects",
+          `<article> count (${articleCount}) does not match parsed collection entry count (${projectEntries.length})`
+        );
+      }
+
+      for (const entry of projectEntries) {
+        if (entry.title !== null && !projectsInner.includes(entry.title)) {
+          projectsOk = false;
+          addViolation("projects", `parsed entry "${entry.file}" title missing from the projects slice`);
+        }
+        if (entry.description !== null && !projectsInner.includes(entry.description)) {
+          projectsOk = false;
+          addViolation("projects", `parsed entry "${entry.file}" description missing from the projects slice`);
+        }
+        for (const tag of entry.tags) {
+          if (!projectsInner.includes(tag.toUpperCase())) {
+            projectsOk = false;
+            addViolation(
+              "projects",
+              `parsed entry "${entry.file}" tag "${tag}" not found uppercased in the projects slice`
+            );
+          }
+        }
+      }
+
+      const projectAnchorMatches = [...projectsInner.matchAll(/<a\b([^>]*)>/gi)];
+      for (const m of projectAnchorMatches) {
+        const anchorAttrs = m[1];
+        if (!/rel="noopener noreferrer"/.test(anchorAttrs)) {
+          projectsOk = false;
+          addViolation(
+            "projects",
+            'an anchor inside the projects slice is missing rel="noopener noreferrer" (PROJ-03)'
+          );
+        }
+        const hrefMatch = /href="([^"]*)"/.exec(anchorAttrs);
+        if (!hrefMatch || !hrefMatch[1].startsWith("https://")) {
+          projectsOk = false;
+          addViolation(
+            "projects",
+            `an anchor inside the projects slice has href "${
+              hrefMatch ? hrefMatch[1] : "(missing)"
+            }" not https://-prefixed (URL-scheme allowlist)`
+          );
+        }
+      }
+
+      const imgCount = (projectsInner.match(/<img\b/gi) || []).length;
+      const expectedImgCount = projectEntries.filter((e) => e.hasCoverImage).length;
+      if (imgCount !== expectedImgCount) {
+        projectsOk = false;
+        addViolation(
+          "projects",
+          `<img> count (${imgCount}) does not match entries declaring coverImage (${expectedImgCount})`
+        );
+      }
+
+      const coverFallbackMatches = [
+        ...projectsInner.matchAll(/<div\b[^>]*class="([^"]*\bcover-fallback\b[^"]*)"[^>]*>/gi),
+      ];
+      const expectedFallbackCount = projectEntries.filter((e) => !e.hasCoverImage).length;
+      if (coverFallbackMatches.length !== expectedFallbackCount) {
+        projectsOk = false;
+        addViolation(
+          "projects",
+          `cover-fallback element count (${coverFallbackMatches.length}) does not match entries without coverImage (${expectedFallbackCount})`
+        );
+      }
+
+      for (const cfm of coverFallbackMatches) {
+        const cls = cfm[1];
+        for (const need of [
+          "bg-linear-to-br",
+          "from-primary-container/15",
+          "via-surface-container",
+          "to-surface-container-high",
+          "w-full",
+          "h-48",
+        ]) {
+          if (!cls.includes(need)) {
+            projectsOk = false;
+            addViolation("projects", `a cover-fallback element's class is missing ${need}`);
+          }
+        }
+        const fallbackOpenEndIdx = cfm.index + cfm[0].length;
+        const fallbackInner = extractElementInner(projectsInner, fallbackOpenEndIdx, "div");
+        if (fallbackInner === null) {
+          projectsOk = false;
+          addViolation("projects", "could not extract a cover-fallback element's inner markup");
+        } else {
+          const svgCount = (fallbackInner.match(/<svg\b/gi) || []).length;
+          if (svgCount !== 1) {
+            projectsOk = false;
+            addViolation(
+              "projects",
+              `a cover-fallback element must contain exactly one inline <svg>, found ${svgCount}`
+            );
+          }
+          if (!/class="[^"]*\bcover-fallback-icon\b[^"]*"/.test(fallbackInner)) {
+            projectsOk = false;
+            addViolation(
+              "projects",
+              "a cover-fallback element's <svg> wrapper is missing the cover-fallback-icon class"
+            );
+          }
+        }
+      }
+
+      if (/background-image:/.test(projectsInner)) {
+        projectsOk = false;
+        addViolation("projects", "background-image: found inside the projects slice (Pitfall 8)");
+      }
+    }
+  }
+}
+
+if (html.includes("bg-gradient-to-")) {
+  projectsOk = false;
+  addViolation("projects", 'dist/index.html contains banned Tailwind v3 syntax "bg-gradient-to-"');
+}
+
+// Built-CSS hover primitive (D-09) — descendant-combinator selectors, must
+// be matched against cssLoose (cssStripped would collapse the combinator
+// space into what looks like a compound selector).
+const coverFallbackHoverBlock = findCssBlock(cssLoose, "\\.group:hover\\s+\\.cover-fallback\\b");
+if (!coverFallbackHoverBlock || !/background-color/.test(coverFallbackHoverBlock)) {
+  projectsOk = false;
+  addViolation(
+    "projects",
+    "no .group:hover .cover-fallback rule setting background-color found in built CSS"
+  );
+}
+
+const coverFallbackIconHoverBlock = findCssBlock(
+  cssLoose,
+  "\\.group:hover\\s+\\.cover-fallback-icon\\b"
+);
+if (
+  !coverFallbackIconHoverBlock ||
+  !/opacity/.test(coverFallbackIconHoverBlock) ||
+  !/transform:[^;]*scale/.test(coverFallbackIconHoverBlock)
+) {
+  projectsOk = false;
+  addViolation(
+    "projects",
+    "no .group:hover .cover-fallback-icon rule setting opacity and a scale transform found in built CSS"
+  );
+}
+
+if (indexAstroSrc) {
+  if (!/getCollection\("projects"\)/.test(indexAstroSrc)) {
+    projectsOk = false;
+    addViolation("projects", 'src/pages/index.astro missing getCollection("projects")');
+  }
+  if (!/astro:assets/.test(indexAstroSrc)) {
+    projectsOk = false;
+    addViolation("projects", "src/pages/index.astro missing an astro:assets import");
+  }
+  const imageOccurrences = (indexAstroSrc.match(/<Image\b/g) || []).length;
+  if (imageOccurrences !== 1) {
+    projectsOk = false;
+    addViolation(
+      "projects",
+      `expected exactly one <Image usage in src/pages/index.astro, found ${imageOccurrences}`
+    );
+  } else {
+    const imageIdx = indexAstroSrc.indexOf("<Image");
+    const coverImageCondIdx = indexAstroSrc.indexOf("coverImage ?");
+    if (coverImageCondIdx === -1 || !(imageIdx > coverImageCondIdx)) {
+      projectsOk = false;
+      addViolation("projects", "<Image must be positioned after the coverImage ? conditional (Pitfall 2)");
+    }
+  }
+  if (!indexAstroSrc.includes("Capa do projeto")) {
+    projectsOk = false;
+    addViolation("projects", 'src/pages/index.astro missing the alt-derivation string "Capa do projeto"');
+  }
+  if (!indexAstroSrc.includes("md:col-span-2")) {
+    projectsOk = false;
+    addViolation("projects", "src/pages/index.astro missing md:col-span-2 (D-06)");
+  }
+  if (!indexAstroSrc.includes("border-glow-cyan")) {
+    projectsOk = false;
+    addViolation("projects", "src/pages/index.astro missing border-glow-cyan for the featured card (D-06)");
+  }
+  if (!/data\.featured/.test(indexAstroSrc)) {
+    projectsOk = false;
+    addViolation("projects", "src/pages/index.astro does not reference data.featured");
+  }
+  for (const bad of ["grid-auto-flow", "dense", "background-image", "getImage("]) {
+    if (indexAstroSrc.includes(bad)) {
+      projectsOk = false;
+      addViolation("projects", `src/pages/index.astro must not contain "${bad}"`);
+    }
+  }
+
+  const filterCount = (indexAstroSrc.match(/\.filter\(/g) || []).length;
+  if (filterCount < 2) {
+    projectsOk = false;
+    addViolation(
+      "projects",
+      `expected at least two .filter( calls for the featured/rest sort split (D-07), found ${filterCount}`
+    );
+  }
+  if (/\bInfinity\b/.test(indexAstroSrc)) {
+    projectsOk = false;
+    addViolation(
+      "projects",
+      "src/pages/index.astro must not use Infinity as the order fallback (NaN comparator risk) — use Number.MAX_SAFE_INTEGER"
+    );
+  }
+  if (!indexAstroSrc.includes("Number.MAX_SAFE_INTEGER")) {
+    projectsOk = false;
+    addViolation(
+      "projects",
+      "src/pages/index.astro must use Number.MAX_SAFE_INTEGER as the order sort fallback"
+    );
+  }
+} else {
+  projectsOk = false;
+  addViolation("projects", `${indexAstroPath} not found`);
+}
+
+// -----------------------------------------------------------------------
+// Check group: fidelity (LAY-01, LAY-02) — the phase's closing
+// cross-section contract.
+// -----------------------------------------------------------------------
+let fidelityOk = true;
+
+const allSectionTagIdxs = [...html.matchAll(/<section\b/gi)].map((m) => m.index);
+if (allSectionTagIdxs.length !== 5) {
+  fidelityOk = false;
+  addViolation("fidelity", `expected exactly five <section elements, found ${allSectionTagIdxs.length}`);
+}
+
+const fidelityH1Idx = html.indexOf("<h1");
+const fidelityDossierIdx = html.indexOf('id="dossier"');
+const fidelityStackIdx = html.indexOf('id="stack"');
+const fidelityProjectsIdx = html.indexOf('id="projects"');
+const fidelityContactIdx = html.indexOf('id="contact"');
+if (
+  fidelityH1Idx === -1 ||
+  fidelityDossierIdx === -1 ||
+  fidelityStackIdx === -1 ||
+  fidelityProjectsIdx === -1 ||
+  fidelityContactIdx === -1 ||
+  !(
+    fidelityH1Idx < fidelityDossierIdx &&
+    fidelityDossierIdx < fidelityStackIdx &&
+    fidelityStackIdx < fidelityProjectsIdx &&
+    fidelityProjectsIdx < fidelityContactIdx
+  )
+) {
+  fidelityOk = false;
+  addViolation(
+    "fidelity",
+    'document order must be <h1> (Hero) < id="dossier" < id="stack" < id="projects" < id="contact"'
+  );
+}
+
+for (const id of ["dossier", "stack", "projects", "contact"]) {
+  const idCount = (html.match(new RegExp(`id="${id}"`, "g")) || []).length;
+  if (idCount !== 1) {
+    fidelityOk = false;
+    addViolation("fidelity", `expected exactly one id="${id}" element, found ${idCount}`);
+    continue;
+  }
+  const tagMatch = new RegExp(`<[a-z0-9]+\\b[^>]*\\bid="${id}"[^>]*>`, "i").exec(html);
+  if (!tagMatch || !tagMatch[0].includes("scroll-mt-32")) {
+    fidelityOk = false;
+    addViolation("fidelity", `id="${id}" element missing scroll-mt-32`);
+  }
+}
+
+// Cross-check: every in-page href="#..." (other than #main-content) must
+// resolve to an existing id — catches a nav anchor pointing at a renamed
+// section.
+const hashHrefTargets = new Set(
+  [...html.matchAll(/href="#([^"]+)"/g)].map((m) => m[1]).filter((t) => t !== "main-content")
+);
+for (const target of hashHrefTargets) {
+  if (!html.includes(`id="${target}"`)) {
+    fidelityOk = false;
+    addViolation("fidelity", `href="#${target}" has no matching id="${target}" element`);
+  }
+}
+
+if (indexAstroSrc) {
+  const fidelityBlocklist = [
+    "mono-code",
+    "body-lg",
+    "font-bold",
+    "bg-gradient-to-",
+    "rounded-DEFAULT",
+    "set:html",
+    "<script",
+    "<main",
+    "client:",
+    "background-image",
+    "grid-auto-flow",
+    "lh3.googleusercontent.com",
+    "http://",
+    "fonts.googleapis.com",
+    "fonts.gstatic.com",
+    "cdn.tailwindcss.com",
+  ];
+  for (const bad of fidelityBlocklist) {
+    if (indexAstroSrc.includes(bad)) {
+      fidelityOk = false;
+      addViolation("fidelity", `src/pages/index.astro must not contain "${bad}"`);
+    }
+  }
+
+  // Typography size budget (max 4 distinct sizes) — alternation ordered
+  // longest-first so display-lg-mobile is captured whole, not truncated to
+  // display-lg.
+  const sizeTokenRe = /display-lg-mobile|display-lg|headline-md|body-lg|body-md|mono-label|mono-code/g;
+  const sizeTokensFound = new Set(indexAstroSrc.match(sizeTokenRe) || []);
+  for (const banned of ["body-lg", "mono-code"]) {
+    if (sizeTokensFound.has(banned)) {
+      fidelityOk = false;
+      addViolation("fidelity", `typography size budget violated — src/pages/index.astro still uses "${banned}"`);
+    }
+  }
+
+  // Typography weight budget (max 2 distinct weights), anchored so
+  // font-mono-label / md:font-display-lg never match (neither carries a
+  // literal weight word from this list).
+  const weightTokenRe = /\bfont-(semibold|medium|bold|normal|light|extralight|extrabold|black)\b/g;
+  const weightTokensFound = new Set([...indexAstroSrc.matchAll(weightTokenRe)].map((m) => m[1]));
+  const expectedWeights = new Set(["semibold", "medium"]);
+  const weightSetsEqual =
+    weightTokensFound.size === expectedWeights.size &&
+    [...weightTokensFound].every((w) => expectedWeights.has(w));
+  if (!weightSetsEqual) {
+    fidelityOk = false;
+    addViolation(
+      "fidelity",
+      `typography weight budget violated — expected exactly {semibold, medium}, found {${[...weightTokensFound].join(", ")}}`
+    );
+  }
+
+  const fidelityClassAttrs = [...indexAstroSrc.matchAll(/class="([^"]*)"/g)].map((m) => m[1]);
+  for (const cls of fidelityClassAttrs) {
+    if (cls.includes("font-body-md") && !cls.includes("font-medium")) {
+      fidelityOk = false;
+      addViolation("fidelity", "an element with font-body-md is missing font-medium");
+    }
+  }
+} else {
+  fidelityOk = false;
+  addViolation("fidelity", `${indexAstroPath} not found`);
+}
+
+const fidelityBannedHtmlStrings = [
+  "SYSTEM_ARCHITECT",
+  "SYSTEM.CORE",
+  "VIEW PROJECTS",
+  "AVAILABLE FOR NEW PROJECTS",
+  "LET'S BUILD SOMETHING GREAT",
+  "ALL RIGHTS RESERVED",
+  "© 2024",
+  "TYPESCRIPT",
+  "NEXT.JS",
+  "KUBERNETES",
+];
+for (const banned of fidelityBannedHtmlStrings) {
+  if (html.includes(banned)) {
+    fidelityOk = false;
+    addViolation("fidelity", `dist/index.html contains banned prototype string "${banned}"`);
+  }
+}
+
+const fidelityH1Count = (html.match(/<h1\b/gi) || []).length;
+if (fidelityH1Count !== 1) {
+  fidelityOk = false;
+  addViolation("fidelity", `expected exactly one <h1, found ${fidelityH1Count}`);
+}
+const fidelityH2Count = (html.match(/<h2\b/gi) || []).length;
+if (fidelityH2Count < 4) {
+  fidelityOk = false;
+  addViolation("fidelity", `expected at least four <h2, found ${fidelityH2Count}`);
+}
+
+// -----------------------------------------------------------------------
 // Print violations + summary line.
 // -----------------------------------------------------------------------
 for (const v of violations) {
@@ -1012,6 +1529,8 @@ console.log(
     heroOk ? "ok" : "fail"
   } dossier=${dossierOk ? "ok" : "fail"} stack=${stackOk ? "ok" : "fail"} contact=${
     contactOk ? "ok" : "fail"
+  } projects=${projectsOk ? "ok" : "fail"} fidelity=${
+    fidelityOk ? "ok" : "fail"
   } violations=${violations.length}`
 );
 
