@@ -60,7 +60,10 @@ Decimal phases appear between their surrounding integers in numeric order.
   4. Visitor browses Project cards (rendered from the Astro Content Collection) showing name, description, tech tags, and safe external live/repo links (`rel="noopener noreferrer"`), with optimized cover images via `astro:assets`
   5. Visitor finds a Contact section with direct email/GitHub/LinkedIn links and no form
   6. On mobile, all sections reflow per DESIGN.md (20px margins, adaptive grid, reduced background grid) and the overall visual matches the `screen.png` prototype
-**Plans**: TBD
+**Plans**: 3 plans (3 waves)
+- [ ] 03-01-PLAN.md — Page container wrapper on `<main>`, Hero and Dossier sections, and the new Phase 3 sections gate
+- [ ] 03-02-PLAN.md — Tech Stack badge grid and the Contact panel, plus the `contactHeading`/`contactSubtitle` fields in `site.ts`
+- [ ] 03-03-PLAN.md — Projects grid from the Content Collection, the gradient-fallback hover primitive, and the closing fidelity/responsiveness verification
 **UI hint**: yes
 
 ### Phase 4: SEO, Accessibility & Polish
@@ -97,7 +100,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 |-------|----------------|--------|-----------|
 | 1. Foundation & Design System | 3/3 | Complete   | 2026-09-02 |
 | 2. Layout & Navigation Shell | 3/3 | Complete   | 2026-09-03 |
-| 3. Content Sections | 0/TBD | Not started | - |
+| 3. Content Sections | 0/3 | Planned | - |
 | 4. SEO, Accessibility & Polish | 0/TBD | Not started | - |
 | 5. Security Hardening & Deploy | 0/TBD | Not started | - |
-</content>
