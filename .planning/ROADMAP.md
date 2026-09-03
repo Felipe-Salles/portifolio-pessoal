@@ -96,7 +96,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation & Design System | 3/3 | Complete   | 2026-09-02 |
-| 2. Layout & Navigation Shell | 0/TBD | Not started | - |
+| 2. Layout & Navigation Shell | 1/3 | In Progress|  |
 | 3. Content Sections | 0/TBD | Not started | - |
 | 4. SEO, Accessibility & Polish | 0/TBD | Not started | - |
 | 5. Security Hardening & Deploy | 0/TBD | Not started | - |
