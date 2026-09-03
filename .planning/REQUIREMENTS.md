@@ -19,8 +19,8 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Tech Stack
 
-- [ ] **TECH-01**: Visitante vê a seção Tech Stack organizada em 3 categorias (Languages, Frameworks, Infrastructure)
-- [ ] **TECH-02**: Cada tecnologia é exibida como badge monospace, seguindo o padrão visual do DESIGN.md
+- [x] **TECH-01**: Visitante vê a seção Tech Stack organizada em 3 categorias (Languages, Frameworks, Infrastructure)
+- [x] **TECH-02**: Cada tecnologia é exibida como badge monospace, seguindo o padrão visual do DESIGN.md
 
 ### Projects
 
@@ -31,7 +31,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Contact
 
-- [ ] **CONT-01**: Visitante vê uma seção de Contato com links diretos (email, GitHub, LinkedIn) — sem formulário funcional
+- [x] **CONT-01**: Visitante vê uma seção de Contato com links diretos (email, GitHub, LinkedIn) — sem formulário funcional
 
 ### Layout & Design Fidelity
 
@@ -110,13 +110,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 | HERO-02 | Phase 3 | Complete |
 | DOSS-01 | Phase 3 | Complete |
 | DOSS-02 | Phase 3 | Complete |
-| TECH-01 | Phase 3 | Pending |
-| TECH-02 | Phase 3 | Pending |
+| TECH-01 | Phase 3 | Complete |
+| TECH-02 | Phase 3 | Complete |
 | PROJ-01 | Phase 3 | Pending |
 | PROJ-02 | Phase 3 | Pending |
 | PROJ-03 | Phase 3 | Pending |
 | PROJ-04 | Phase 3 | Pending |
-| CONT-01 | Phase 3 | Pending |
+| CONT-01 | Phase 3 | Complete |
 | LAY-01 | Phase 3 | Pending |
 | LAY-02 | Phase 3 | Pending |
 | LAY-03 | Phase 2 | Complete |
