@@ -30,6 +30,13 @@ export const site = {
   // Hero subtitle (HERO-01).
   heroSubtitle: "PLACEHOLDER — subtítulo a definir",
 
+  // Browser-tab / SEO <title> for "/" (SEO-01). index.astro reads this
+  // instead of hardcoding the real production title, keeping every
+  // identity-bearing string swappable from this one module (D-03);
+  // 404.astro overrides it with its own page-specific literal instead of
+  // reading this field, matching metaDescription's precedent below.
+  pageTitle: "PLACEHOLDER — título da aba/SEO a definir",
+
   // Meta description for SEO-01 (150-160 chars target). Base.astro's
   // default `description` prop value for "/"; 404.astro (plan 04-02)
   // overrides it with its own page-specific literal instead of reading
