@@ -14,11 +14,11 @@
 // - Accumulate failures into a violations array rather than exiting on the
 //   first one; print each as "verify-shell: <check> — <detail>" on stderr.
 // - Always print exactly one summary line:
-//     SHELL SUMMARY lang=<ok|fail> landmarks=<ok|fail> skiplink=<ok|fail> nav=<ok|fail> brand=<ok|fail> focuscss=<ok|fail> violations=<n>
+//     SHELL SUMMARY lang=<ok|fail> landmarks=<ok|fail> skiplink=<ok|fail> nav=<ok|fail> brand=<ok|fail> focuscss=<ok|fail> overlay=<ok|fail> overlayjs=<ok|fail> footer=<ok|fail> headings=<ok|fail> violations=<n>
 // - Exit 0 only when violations=0.
 //
-// Structured so plans 02-02 and 02-03 can append further check groups and
-// further key=value pairs to the summary line without rewriting this file.
+// Extended by plan 02-02 (overlay/overlayjs groups) and plan 02-03
+// (footer/headings groups) without rewriting earlier check groups.
 
 import { readFileSync, existsSync, readdirSync, statSync } from "node:fs";
 import { join, extname } from "node:path";
@@ -656,6 +656,317 @@ if (!existsSync(navAstroPath)) {
   }
 }
 
+/** Escape a string for safe interpolation into a RegExp literal. */
+function escapeRegex(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+// -----------------------------------------------------------------------
+// Footer socials parser (D-03) — derives entry count and label list from
+// src/data/site.ts at runtime rather than hardcoding 4/"PLACEHOLDER", so the
+// gate keeps working once v2's REAL-03 replaces the placeholder social
+// links.
+// -----------------------------------------------------------------------
+let socialsCount = null;
+let socialsLabels = null;
+let socialsParseOk = true;
+if (!existsSync(siteTsPath)) {
+  socialsParseOk = false;
+} else {
+  const siteTsForSocials = readFileSync(siteTsPath, "utf8");
+  const socialsKeyIdx = siteTsForSocials.indexOf("socials:");
+  const arrayStartIdx =
+    socialsKeyIdx === -1 ? -1 : siteTsForSocials.indexOf("[", socialsKeyIdx);
+  if (arrayStartIdx === -1) {
+    socialsParseOk = false;
+  } else {
+    // Balance-match brackets to find the closing ] of the array literal.
+    let depth = 0;
+    let endIdx = -1;
+    for (let i = arrayStartIdx; i < siteTsForSocials.length; i++) {
+      const ch = siteTsForSocials[i];
+      if (ch === "[") depth++;
+      else if (ch === "]") {
+        depth--;
+        if (depth === 0) {
+          endIdx = i;
+          break;
+        }
+      }
+    }
+    if (endIdx === -1) {
+      socialsParseOk = false;
+    } else {
+      const socialsSlice = siteTsForSocials.slice(arrayStartIdx, endIdx + 1);
+      socialsCount = (socialsSlice.match(/href:/g) || []).length;
+      socialsLabels = [...socialsSlice.matchAll(/label:\s*["']([^"']*)["']/g)].map(
+        (m) => m[1]
+      );
+    }
+  }
+}
+
+// -----------------------------------------------------------------------
+// Check group: footer (D-03 data-driven link row, T-02-19/T-02-20/T-02-21)
+// -----------------------------------------------------------------------
+let footerOk = true;
+if (!socialsParseOk || socialsCount === null || socialsLabels === null) {
+  footerOk = false;
+  addViolation("footer", "could not parse site.socials from src/data/site.ts");
+}
+
+const footerOpenTags = html.match(/<footer\b[^>]*>/gi) || [];
+const mainCloseIdx = html.indexOf("</main>");
+const footerOpenIdx = html.search(/<footer\b/i);
+const footerCloseIdx = html.indexOf("</footer>");
+if (footerOpenTags.length !== 1) {
+  footerOk = false;
+  addViolation(
+    "footer",
+    `expected exactly one <footer opening tag, found ${footerOpenTags.length}`
+  );
+} else if (mainCloseIdx === -1) {
+  footerOk = false;
+  addViolation("footer", "could not find </main> closing tag");
+} else if (!(footerOpenIdx > mainCloseIdx)) {
+  footerOk = false;
+  addViolation(
+    "footer",
+    "<footer> must be a sibling of <main>, positioned after </main> — a real contentinfo landmark, not nested inside main"
+  );
+}
+
+// data-footer-socials container: exactly one, inside the footer.
+const socialsContainerMatches =
+  html.match(/<[a-z0-9]+\b[^>]*\bdata-footer-socials\b[^>]*>/gi) || [];
+if (socialsContainerMatches.length !== 1) {
+  footerOk = false;
+  addViolation(
+    "footer",
+    `expected exactly one data-footer-socials container, found ${socialsContainerMatches.length}`
+  );
+} else {
+  const containerTagMatch =
+    /<([a-z0-9]+)\b[^>]*\bdata-footer-socials\b[^>]*>/i.exec(html);
+  const containerTagName = containerTagMatch[1];
+  const containerOpenIdx = html.indexOf(containerTagMatch[0]);
+  const containerOpenEndIdx = containerOpenIdx + containerTagMatch[0].length;
+
+  if (footerOpenTags.length === 1 && footerOpenIdx !== -1) {
+    if (
+      footerCloseIdx === -1 ||
+      !(containerOpenIdx > footerOpenIdx && containerOpenIdx < footerCloseIdx)
+    ) {
+      footerOk = false;
+      addViolation(
+        "footer",
+        "data-footer-socials container must be inside <footer>"
+      );
+    }
+  }
+
+  const containerInner = extractElementInner(
+    html,
+    containerOpenEndIdx,
+    containerTagName
+  );
+  if (containerInner === null) {
+    footerOk = false;
+    addViolation(
+      "footer",
+      "could not extract data-footer-socials container's inner markup"
+    );
+  } else {
+    const anchorMatches = [
+      ...containerInner.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi),
+    ];
+    if (socialsCount !== null && anchorMatches.length !== socialsCount) {
+      footerOk = false;
+      addViolation(
+        "footer",
+        `data-footer-socials anchor count (${anchorMatches.length}) does not match site.socials entry count (${socialsCount})`
+      );
+    }
+    for (const m of anchorMatches) {
+      const anchorAttrs = m[1];
+      const anchorText = m[2].replace(/<[^>]*>/g, "").trim();
+      if (!/rel="noopener noreferrer"/.test(anchorAttrs)) {
+        footerOk = false;
+        addViolation(
+          "footer",
+          `footer social anchor missing rel="noopener noreferrer" (text: "${anchorText}")`
+        );
+      }
+      if (socialsLabels && !socialsLabels.includes(anchorText)) {
+        footerOk = false;
+        addViolation(
+          "footer",
+          `footer social anchor text "${anchorText}" does not match any parsed site.socials label`
+        );
+      }
+    }
+  }
+}
+
+// Copyright line: © <4-digit year> <site.brand> — todos os direitos
+// reservados. Reuses `siteBrand` parsed by the brand check group above.
+const currentYear = new Date().getFullYear();
+if (siteBrand) {
+  const brandEscaped = escapeRegex(siteBrand);
+  const copyrightRegex = new RegExp(
+    `©\\s*(\\d{4})\\s*${brandEscaped}\\s*—\\s*todos os direitos reservados`,
+    "i"
+  );
+  const copyrightMatch = copyrightRegex.exec(html);
+  if (!copyrightMatch) {
+    footerOk = false;
+    addViolation(
+      "footer",
+      "copyright line not found matching pattern © <year> <site.brand> — todos os direitos reservados"
+    );
+  } else {
+    const copyrightYear = Number(copyrightMatch[1]);
+    // A build spanning midnight on 31 December is the one benign
+    // false-positive case here (build-time year vs. gate-run-time year).
+    if (copyrightYear !== currentYear) {
+      footerOk = false;
+      addViolation(
+        "footer",
+        `copyright year ${copyrightYear} does not equal current year ${currentYear}`
+      );
+    }
+  }
+} else {
+  footerOk = false;
+  addViolation(
+    "footer",
+    "cannot verify copyright line — site.brand could not be read"
+  );
+}
+
+// Prototype persona copy must never ship to production.
+const footerBannedStrings = ["SYSTEM_ARCHITECT", "ALL RIGHTS RESERVED", "© 2024"];
+for (const banned of footerBannedStrings) {
+  if (html.includes(banned)) {
+    footerOk = false;
+    addViolation("footer", `dist/index.html contains banned footer string "${banned}"`);
+  }
+}
+
+// Typography correction: footer text collapses onto mono-label, never
+// mono-code (2-weight typography budget, UI-SPEC Typography section).
+if (footerOpenTags.length === 1 && footerOpenIdx !== -1 && footerCloseIdx !== -1) {
+  const footerInner = html.slice(footerOpenIdx, footerCloseIdx);
+  if (footerInner.includes("font-mono-code") || footerInner.includes("text-mono-code")) {
+    footerOk = false;
+    addViolation(
+      "footer",
+      "footer markup must not use font-mono-code/text-mono-code (typography budget correction)"
+    );
+  }
+  if (
+    !footerInner.includes("font-mono-label") ||
+    !footerInner.includes("text-mono-label")
+  ) {
+    footerOk = false;
+    addViolation(
+      "footer",
+      "footer markup must use font-mono-label and text-mono-label"
+    );
+  }
+}
+
+// Footer source checks — the machine-checkable form of D-03's
+// single-source-of-truth claim and the "fully static" constraint.
+const footerAstroPath = join("src", "components", "Footer.astro");
+if (!existsSync(footerAstroPath)) {
+  footerOk = false;
+  addViolation("footer", `${footerAstroPath} not found`);
+} else {
+  const footerAstroSrc = readFileSync(footerAstroPath, "utf8");
+  if (!/site\.socials\.map/.test(footerAstroSrc)) {
+    footerOk = false;
+    addViolation(
+      "footer",
+      "src/components/Footer.astro must contain site.socials.map"
+    );
+  }
+  if (/\.icon\b/.test(footerAstroSrc)) {
+    footerOk = false;
+    addViolation(
+      "footer",
+      "src/components/Footer.astro must not use socials[].icon"
+    );
+  }
+  if (/set:html/.test(footerAstroSrc)) {
+    footerOk = false;
+    addViolation("footer", "src/components/Footer.astro must not use set:html");
+  }
+  if (/<script/.test(footerAstroSrc)) {
+    footerOk = false;
+    addViolation(
+      "footer",
+      "src/components/Footer.astro must not contain <script — footer is fully static"
+    );
+  }
+}
+
+const baseAstroPath = join("src", "layouts", "Base.astro");
+if (!existsSync(baseAstroPath)) {
+  footerOk = false;
+  addViolation("footer", `${baseAstroPath} not found`);
+} else {
+  const baseAstroSrc = readFileSync(baseAstroPath, "utf8");
+  if (
+    !/import\s+Footer\s+from\s+["']\.\.\/components\/Footer\.astro["']/.test(
+      baseAstroSrc
+    )
+  ) {
+    footerOk = false;
+    addViolation(
+      "footer",
+      "src/layouts/Base.astro must import Footer from ../components/Footer.astro"
+    );
+  }
+  const mainCloseSrcIdx = baseAstroSrc.indexOf("</main>");
+  const footerMountMatch = /<Footer\s*\/>/.exec(baseAstroSrc);
+  if (!footerMountMatch) {
+    footerOk = false;
+    addViolation("footer", "src/layouts/Base.astro must mount <Footer />");
+  } else if (
+    mainCloseSrcIdx === -1 ||
+    !(footerMountMatch.index > mainCloseSrcIdx)
+  ) {
+    footerOk = false;
+    addViolation(
+      "footer",
+      "<Footer /> must be mounted after </main> in src/layouts/Base.astro"
+    );
+  }
+}
+
+// -----------------------------------------------------------------------
+// Check group: headings (A11Y-01 heading hierarchy — closes the one clause
+// no earlier plan asserted)
+// -----------------------------------------------------------------------
+let headingsOk = true;
+const h1Tags = html.match(/<h1\b/gi) || [];
+if (h1Tags.length !== 1) {
+  headingsOk = false;
+  addViolation("headings", `expected exactly one <h1, found ${h1Tags.length}`);
+}
+const hasH2 = /<h2\b/i.test(html);
+const hasH3 = /<h3\b/i.test(html);
+const hasH4 = /<h4\b/i.test(html);
+if (hasH3 && !hasH2) {
+  headingsOk = false;
+  addViolation("headings", "found <h3 without any <h2 — heading level skipped downward");
+}
+if (hasH4 && !hasH3) {
+  headingsOk = false;
+  addViolation("headings", "found <h4 without any <h3 — heading level skipped downward");
+}
+
 // -----------------------------------------------------------------------
 // Print violations + summary line.
 // -----------------------------------------------------------------------
@@ -670,7 +981,9 @@ console.log(
     brandOk ? "ok" : "fail"
   } focuscss=${focuscssOk ? "ok" : "fail"} overlay=${
     overlayOk ? "ok" : "fail"
-  } overlayjs=${overlayjsOk ? "ok" : "fail"} violations=${violations.length}`
+  } overlayjs=${overlayjsOk ? "ok" : "fail"} footer=${
+    footerOk ? "ok" : "fail"
+  } headings=${headingsOk ? "ok" : "fail"} violations=${violations.length}`
 );
 
 process.exit(violations.length === 0 ? 0 : 1);
