@@ -1,7 +1,7 @@
 ---
 // Source: Arquivos de design/code.html lines 248-292 (Hero 248-263, Dossier
-// 265-292). Replaces Phase 1's pipeline-proof scaffolding — Phase 3's real
-// content sections begin here.
+// 265-292) and lines 294-325 (Tech Stack). Replaces Phase 1's
+// pipeline-proof scaffolding — Phase 3's real content sections begin here.
 //
 // Mandatory deviations from the prototype:
 // - CTA copy is PT-BR ("VER PROJETOS"), never the prototype's literal
@@ -19,9 +19,25 @@
 //   per the heading-group weight consolidation.
 // - The visitor-name field is deliberately never rendered anywhere on this
 //   page (D-03) — it stays reserved for future meta tags.
+// - Tech Stack renders a fixed three-entry category list built from
+//   site.techStack's three named keys (TECH-01), never a generic loop over
+//   arbitrary category names.
 import Base from "../layouts/Base.astro";
 import { site } from "../data/site.ts";
 import { Icon } from "astro-icon/components";
+
+// Fixed three-category list (TECH-01) — enumerated explicitly rather than
+// derived from a generic iteration over the techStack object's own keys,
+// since the design requires exactly these three named categories in this
+// order. The explicit `items: readonly string[]` annotation widens each
+// entry beyond its narrow `as const` tuple-literal inference so the `.map`
+// calls below type-check even though the three arrays hold different-length
+// literal tuples.
+const techCategories: { label: string; items: readonly string[] }[] = [
+  { label: "LANGUAGES", items: site.techStack.languages },
+  { label: "FRAMEWORKS", items: site.techStack.frameworks },
+  { label: "INFRASTRUCTURE", items: site.techStack.infrastructure },
+];
 ---
 
 <Base title="Portfólio Dev — Felipe Salles">
@@ -69,6 +85,22 @@ import { Icon } from "astro-icon/components";
           ))}
         </ul>
       </div>
+    </div>
+  </section>
+
+  <section class="scroll-mt-32" id="stack">
+    <h2 class="font-headline-md text-headline-md text-white border-b border-outline-variant/30 pb-4 mb-12 inline-block">TECH STACK</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {techCategories.map((category) => (
+        <div class="glass-panel p-6 rounded-lg">
+          <h3 class="font-mono-label text-mono-label text-secondary uppercase tracking-widest mb-6">{category.label}</h3>
+          <div class="flex flex-wrap gap-3">
+            {category.items.map((tech) => (
+              <span class="px-3 py-1 bg-surface-container border border-outline-variant/50 text-white font-mono-label text-mono-label rounded">[ {tech.toUpperCase()} ]</span>
+            ))}
+          </div>
+        </div>
+      ))}
     </div>
   </section>
 </Base>
