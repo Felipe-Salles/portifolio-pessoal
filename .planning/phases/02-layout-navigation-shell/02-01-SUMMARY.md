@@ -118,3 +118,7 @@ Each task was committed atomically:
 ---
 *Phase: 02-layout-navigation-shell*
 *Completed: 2026-09-02*
+
+## Self-Check: PASSED
+
+All created files verified present (`src/components/Nav.astro`, `scripts/verify-shell.mjs`, this SUMMARY, `deferred-items.md`); all task commits verified present in git log (`c1ccd1b`, `f84d26e`, `1f2a271`).
