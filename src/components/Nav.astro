@@ -63,14 +63,22 @@ import { site } from "../data/site.ts";
     >
     <!-- Mobile Menu Toggle — both icons are server-rendered inline SVGs;
          the swap between them is a pure CSS state change (see
-         global.css's icon-swap rules), never a runtime DOM construction. -->
+         global.css's icon-swap rules), never a runtime DOM construction.
+         mr-unit (--spacing-unit, 8px, an existing DESIGN.md token) adds
+         supplemental breathing room beyond the row's own px-margin-mobile
+         inset, specifically on this control's trailing edge — WCAG touch-
+         target guidance recommends spacing around a tap target, not just
+         meeting its 44px minimum size, and the button's crisp square hit-
+         box otherwise reads as flush with the viewport edge even though
+         px-margin-mobile is correctly applied. Margin (not padding) is
+         used so the 44px hit target itself is never shrunk. -->
     <button
       type="button"
       data-nav-toggle
       aria-label="Abrir menu de navegação"
       aria-expanded="false"
       aria-controls="nav-overlay"
-      class="md:hidden inline-flex items-center justify-center w-11 h-11 text-primary-container"
+      class="md:hidden inline-flex items-center justify-center w-11 h-11 mr-unit text-primary-container"
     >
       <Icon name="material-symbols:menu" data-nav-icon="menu" />
       <Icon name="material-symbols:close" data-nav-icon="close" />
