@@ -61,4 +61,10 @@ export const site = {
     { icon: "material-symbols:mail", href: "#", label: "PLACEHOLDER" },
     { icon: "material-symbols:chat", href: "#", label: "PLACEHOLDER" },
   ],
+
+  // Contact section invitational heading (CONT-01, D-12).
+  contactHeading: "PLACEHOLDER — título do convite a definir",
+
+  // Contact section invitational subtitle (CONT-01, D-12).
+  contactSubtitle: "PLACEHOLDER — subtítulo do convite a definir",
 } as const;
