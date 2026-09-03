@@ -9,13 +9,13 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Hero
 
-- [ ] **HERO-01**: Visitante vê uma Hero section com identidade/título profissional (placeholder) e badge de disponibilidade
-- [ ] **HERO-02**: Visitante vê um CTA na Hero que leva para a seção de Projetos
+- [x] **HERO-01**: Visitante vê uma Hero section com identidade/título profissional (placeholder) e badge de disponibilidade
+- [x] **HERO-02**: Visitante vê um CTA na Hero que leva para a seção de Projetos
 
 ### Dossier
 
-- [ ] **DOSS-01**: Visitante lê uma seção "Dossier" (bio/sobre mim) com texto descritivo (placeholder)
-- [ ] **DOSS-02**: Visitante vê stats resumidos ("System Specs": experiência, foco, domínio) ao lado da bio
+- [x] **DOSS-01**: Visitante lê uma seção "Dossier" (bio/sobre mim) com texto descritivo (placeholder)
+- [x] **DOSS-02**: Visitante vê stats resumidos ("System Specs": experiência, foco, domínio) ao lado da bio
 
 ### Tech Stack
 
@@ -106,10 +106,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| HERO-01 | Phase 3 | Pending |
-| HERO-02 | Phase 3 | Pending |
-| DOSS-01 | Phase 3 | Pending |
-| DOSS-02 | Phase 3 | Pending |
+| HERO-01 | Phase 3 | Complete |
+| HERO-02 | Phase 3 | Complete |
+| DOSS-01 | Phase 3 | Complete |
+| DOSS-02 | Phase 3 | Complete |
 | TECH-01 | Phase 3 | Pending |
 | TECH-02 | Phase 3 | Pending |
 | PROJ-01 | Phase 3 | Pending |
