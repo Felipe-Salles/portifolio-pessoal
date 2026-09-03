@@ -244,6 +244,35 @@ body {
   background-color: var(--color-primary-fixed);
 }
 
+/* Global focus-visible glow — 02-UI-SPEC.md "Focus-visible glow (A11Y-01)".
+   Bare :focus-visible (not scoped to a class) so every future phase inherits
+   it automatically. box-shadow value is deliberately identical to
+   .border-glow-cyan above — same glow language, applied on keyboard focus
+   instead of as a static class. Lightning CSS may minify the rgba() into a
+   hex-with-alpha (#00f0ff66) in the built output — that is expected; gates
+   assert on outline/outline-offset, never on the literal rgba text. */
+:focus-visible {
+  outline: 2px solid var(--color-primary-container);
+  outline-offset: 2px;
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
+  border-radius: var(--radius);
+}
+
+/* Skip link off-screen mechanics — 02-UI-SPEC.md "Skip link (D-04)". This
+   class carries only the hiding mechanism plus a motion transition; the
+   skip-link's *visible* :focus appearance is composed in Base.astro's
+   markup from existing Tailwind utilities plus the .glass-panel and
+   .border-glow-cyan primitives above, so nothing visual is duplicated here.
+   Deliberately never display:none / visibility:hidden / a zero width or
+   height — every one of those removes the element from the tab order,
+   which silently defeats D-04 while still looking correct in a screenshot. */
+.skip-link {
+  transition: transform 150ms ease-out;
+}
+.skip-link:not(:focus) {
+  transform: translateY(-200%);
+}
+
 /* Custom scrollbar (code.html lines 65-68) — all three colors are exact
    solid-token matches, so they reference @theme custom properties. */
 ::-webkit-scrollbar {
