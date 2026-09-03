@@ -1,0 +1,49 @@
+---
+// Internal, noindex, screenshot-only route (SEO-02, D-01–D-04). Never linked
+// from the UI, never visited by a real visitor — scripts/generate-og-image.mjs
+// screenshots this page at a fixed 1200x630 viewport to produce
+// public/og-image.png + dist/og-image.png.
+//
+// Deliberately does NOT import/extend Base — no Nav/Footer/skip-link/<main>
+// landmark needed, only the visual composition. The html/head/body shell
+// below mirrors Base.astro's structure (04-PATTERNS.md), with the one
+// deliberate deviation: <meta name="robots" content="noindex" />, required
+// on top of the astro.config.mjs sitemap filter because the route is still
+// physically reachable (04-RESEARCH.md Pitfall 3).
+import "../../styles/global.css";
+
+// Per-weight imports only — a bare package-root import silently loads weight
+// 400 only (Phase 1 pitfall). Only the three weights this composition paints.
+import "@fontsource/lexend/600.css";
+import "@fontsource/lexend/700.css";
+import "@fontsource/jetbrains-mono/500.css";
+
+import { site } from "../../data/site.ts";
+---
+
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>OG Image Template</title>
+    <meta name="robots" content="noindex" />
+  </head>
+  <body class="bg-background text-on-background bg-grid-pattern relative">
+    <div class="glow-cloud-top-right" aria-hidden="true"></div>
+    <div class="glow-cloud-bottom-left" aria-hidden="true"></div>
+    <div class="w-[1200px] h-[630px] relative z-10 flex flex-col justify-center px-20">
+      <div class="glass-panel border-glow-cyan rounded-xl p-12">
+        <div class="inline-flex items-center gap-2 px-3 py-1 mb-8 border border-outline-variant/50 bg-surface-container/50 rounded font-mono-label text-mono-label text-primary-container">
+          <span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span>
+          &gt;_ {site.availabilityStatus}
+        </div>
+        <h1 class="font-display-lg-mobile text-display-lg-mobile md:font-display-lg md:text-display-lg font-semibold tracking-tight text-white mb-4 uppercase">
+          {site.brand}
+        </h1>
+        <p class="font-mono-label text-mono-label text-primary-container uppercase tracking-widest mb-6">
+          {site.title}
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
