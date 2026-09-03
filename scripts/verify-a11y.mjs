@@ -129,18 +129,33 @@ let processedDeferred = 0;
 const deferredContrastEntries = [];
 
 /**
- * Convert a Playwright-evaluated CSS color string (e.g. "rgb(1, 2, 3)" or
- * "rgba(1, 2, 3, 0.5)") to a "#rrggbb" hex string.
+ * Parse a "#rrggbb" hex string into {r, g, b} components.
  */
-function cssColorToHex(cssColor) {
-  const m = /rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)/i.exec(cssColor);
+function hexToRgb(hex) {
+  const m = /^#([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i.exec(hex);
+  if (!m) return { r: 0, g: 0, b: 0 };
+  return { r: parseInt(m[1], 16), g: parseInt(m[2], 16), b: parseInt(m[3], 16) };
+}
+
+/**
+ * Convert a Playwright-evaluated CSS color string (e.g. "rgb(1, 2, 3)" or
+ * "rgba(1, 2, 3, 0.5)") to a "#rrggbb" hex string. When the color carries an
+ * alpha component, it is alpha-blended onto `bgHex` (the sampled painted
+ * background pixel) first — an unblended raw RGB triplet from a semi-
+ * transparent computed color is not the color a user actually sees, and
+ * would silently skew the contrast ratio this check reports.
+ */
+function cssColorToHex(cssColor, bgHex) {
+  const m = /rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)(?:[,\s]+([\d.]+))?/i.exec(
+    cssColor,
+  );
   if (!m) return null;
-  const [, r, g, b] = m;
-  const toHex = (n) =>
-    Math.max(0, Math.min(255, Math.round(Number(n))))
-      .toString(16)
-      .padStart(2, "0");
-  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+  const [, r, g, b, a] = m;
+  const alpha = a === undefined ? 1 : Number(a);
+  const bg = bgHex ? hexToRgb(bgHex) : { r: 0, g: 0, b: 0 };
+  const blend = (fg, bgc) => Math.round(Number(fg) * alpha + bgc * (1 - alpha));
+  const toHex = (n) => Math.max(0, Math.min(255, n)).toString(16).padStart(2, "0");
+  return `#${toHex(blend(r, bg.r))}${toHex(blend(g, bg.g))}${toHex(blend(b, bg.b))}`;
 }
 
 let server;
@@ -282,19 +297,12 @@ try {
         continue;
       }
 
-      const fgHex = cssColorToHex(computed.color);
-      if (!fgHex) {
-        processedDeferred++;
-        addViolation(
-          "contrast",
-          `${route} ${entry.selector} — unreadable computed color "${computed.color}"`,
-        );
-        continue;
-      }
-
       // Sample a pixel a few px inset from the box's top-left corner —
       // background, not glyph stroke (RESEARCH.md Pattern 4). Text is
-      // centered/baseline-aligned, so the corner is background.
+      // centered/baseline-aligned, so the corner is background. Sampled
+      // BEFORE hexifying the foreground color because cssColorToHex needs
+      // this background pixel to alpha-blend a semi-transparent computed
+      // `color` into the actual rendered foreground.
       const insetX = Math.min(2, Math.max(0, Math.floor(box.width / 2) - 1));
       const insetY = Math.min(2, Math.max(0, Math.floor(box.height / 2) - 1));
       let bgHex;
@@ -316,6 +324,16 @@ try {
         addViolation(
           "contrast",
           `${route} ${entry.selector} — could not sample painted pixel (${err.message})`,
+        );
+        continue;
+      }
+
+      const fgHex = cssColorToHex(computed.color, bgHex);
+      if (!fgHex) {
+        processedDeferred++;
+        addViolation(
+          "contrast",
+          `${route} ${entry.selector} — unreadable computed color "${computed.color}"`,
         );
         continue;
       }
