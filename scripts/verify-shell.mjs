@@ -68,6 +68,62 @@ for (const f of cssFiles) {
 }
 // Whitespace-stripped copy for all CSS assertions — Lightning CSS minifies output.
 const cssStripped = css.replace(/\s+/g, "");
+// Whitespace-collapsed copy (02-02) — collapses every whitespace run to a
+// single space and trims spaces immediately around { } ; , . Unlike
+// cssStripped, this copy preserves the single space of a descendant
+// combinator (e.g. `nav[data-menu-open="true"] [data-nav-icon="menu"]`),
+// which cssStripped would otherwise collapse into what looks like a single
+// compound selector. Use cssStripped for declaration values and any
+// compound (no-descendant-combinator) selector; use cssLoose only for
+// selectors containing a descendant combinator.
+const cssLoose = css
+  .replace(/\s+/g, " ")
+  .replace(/\s*([{};,])\s*/g, "$1")
+  .trim();
+
+/** Attribute-selector fragment tolerating both quoted and unquoted forms —
+ * Lightning CSS drops quotes around attribute values that are valid CSS
+ * identifiers (e.g. `true`/`false`). */
+function attrEq(attr, value) {
+  return `\\[${attr}=(?:"${value}"|${value})\\]`;
+}
+
+/** Find `<selectorRegexStr>{<declarations>}` in `source` and return the
+ * declaration block's captured text, or null if no match. */
+function findCssBlock(source, selectorRegexStr) {
+  const re = new RegExp(`${selectorRegexStr}\\{([^}]*)\\}`);
+  const m = re.exec(source);
+  return m ? m[1] : null;
+}
+
+/** Balance-match an HTML element's inner content starting just after its
+ * opening tag closes, given the element's tag name. Handles nested elements
+ * of the same tag name (e.g. nested <div>s) so a naive lastIndexOf of the
+ * closing tag doesn't grab an unrelated closing tag elsewhere on the page. */
+function extractElementInner(source, openTagEndIdx, tagName) {
+  const openRe = new RegExp(`<${tagName}\\b`, "gi");
+  const closeRe = new RegExp(`</${tagName}>`, "gi");
+  let depth = 1;
+  let idx = openTagEndIdx;
+  while (depth > 0) {
+    openRe.lastIndex = idx;
+    closeRe.lastIndex = idx;
+    const nextOpen = openRe.exec(source);
+    const nextClose = closeRe.exec(source);
+    if (!nextClose) return null;
+    if (nextOpen && nextOpen.index < nextClose.index) {
+      depth++;
+      idx = nextOpen.index + nextOpen[0].length;
+    } else {
+      depth--;
+      idx = nextClose.index + nextClose[0].length;
+      if (depth === 0) {
+        return source.slice(openTagEndIdx, nextClose.index);
+      }
+    }
+  }
+  return null;
+}
 
 // -----------------------------------------------------------------------
 // Check group: lang (SEO-06)
@@ -322,6 +378,276 @@ if (existsSync(indexAstroPath)) {
 }
 
 // -----------------------------------------------------------------------
+// Check group: overlay markup (D-01)
+// -----------------------------------------------------------------------
+let overlayOk = true;
+
+const overlayIdMatches = html.match(/id="nav-overlay"/g) || [];
+if (overlayIdMatches.length !== 1) {
+  overlayOk = false;
+  addViolation(
+    "overlay",
+    `expected exactly one id="nav-overlay" element, found ${overlayIdMatches.length}`
+  );
+}
+
+const overlayTagRegex = /<[a-z0-9]+\b[^>]*id="nav-overlay"[^>]*>/i;
+const overlayTagMatch = overlayTagRegex.exec(html);
+if (!overlayTagMatch) {
+  overlayOk = false;
+  addViolation(
+    "overlay",
+    'could not locate the opening tag carrying id="nav-overlay"'
+  );
+} else {
+  const tag = overlayTagMatch[0];
+  const requiredAttrs = [
+    "data-nav-overlay",
+    'data-menu-open="false"',
+    'role="dialog"',
+    'aria-modal="true"',
+    'aria-label="Menu de navegação"',
+  ];
+  for (const attr of requiredAttrs) {
+    if (!tag.includes(attr)) {
+      overlayOk = false;
+      addViolation("overlay", `overlay tag missing ${attr}`);
+    }
+  }
+}
+
+// Overlay must be a sibling of <nav>, not nested inside it (backdrop-filter
+// containing-block trap) — </nav> must close before id="nav-overlay" appears.
+const navCloseIdx = html.indexOf("</nav>");
+const overlayIdIdx = html.indexOf('id="nav-overlay"');
+if (navCloseIdx === -1 || overlayIdIdx === -1) {
+  overlayOk = false;
+  addViolation(
+    "overlay",
+    'could not find both </nav> and id="nav-overlay" in dist/index.html'
+  );
+} else if (!(navCloseIdx < overlayIdIdx)) {
+  overlayOk = false;
+  addViolation(
+    "overlay",
+    "overlay must be a sibling of <nav>, not a descendant — </nav> must close before id=\"nav-overlay\" appears (the nav's backdrop-filter makes it a containing block for position:fixed descendants)"
+  );
+}
+
+// Toggle button: aria-controls must equal the overlay id, and it must
+// contain exactly two inline <svg> icons (menu + close), server-rendered.
+const toggleTagRegex = /<button\b[^>]*data-nav-toggle[^>]*>/i;
+const toggleTagMatch = toggleTagRegex.exec(html);
+if (!toggleTagMatch) {
+  overlayOk = false;
+  addViolation("overlay", "could not locate the toggle button (data-nav-toggle)");
+} else {
+  if (!/aria-controls="nav-overlay"/.test(toggleTagMatch[0])) {
+    overlayOk = false;
+    addViolation(
+      "overlay",
+      'toggle button aria-controls must equal "nav-overlay"'
+    );
+  }
+  const toggleStart = toggleTagMatch.index;
+  const toggleCloseIdx = html.indexOf("</button>", toggleStart);
+  if (toggleCloseIdx === -1) {
+    overlayOk = false;
+    addViolation("overlay", "could not find closing </button> for the mobile toggle");
+  } else {
+    const toggleInner = html.slice(toggleStart, toggleCloseIdx);
+    const svgCount = (toggleInner.match(/<svg\b/g) || []).length;
+    if (svgCount !== 2) {
+      overlayOk = false;
+      addViolation(
+        "overlay",
+        `toggle button must contain exactly two inline <svg> elements, found ${svgCount}`
+      );
+    }
+    if (!/data-nav-icon="menu"/.test(toggleInner)) {
+      overlayOk = false;
+      addViolation("overlay", 'toggle button missing icon with data-nav-icon="menu"');
+    }
+    if (!/data-nav-icon="close"/.test(toggleInner)) {
+      overlayOk = false;
+      addViolation("overlay", 'toggle button missing icon with data-nav-icon="close"');
+    }
+  }
+}
+
+// Overlay contents: five anchors total (4 section links + Connect), scoped
+// strictly to the overlay element's own inner markup.
+if (overlayTagMatch) {
+  const overlayTagNameMatch = /^<([a-z0-9]+)/i.exec(overlayTagMatch[0]);
+  const overlayTagName = overlayTagNameMatch ? overlayTagNameMatch[1] : null;
+  const overlayTagEndIdx = overlayTagMatch.index + overlayTagMatch[0].length;
+  const overlayInner = overlayTagName
+    ? extractElementInner(html, overlayTagEndIdx, overlayTagName)
+    : null;
+  if (!overlayInner) {
+    overlayOk = false;
+    addViolation("overlay", "could not extract the overlay element's inner markup");
+  } else {
+    const overlayAnchors = [
+      { href: "#dossier", label: "Dossier" },
+      { href: "#stack", label: "Stack" },
+      { href: "#projects", label: "Projects" },
+      { href: "#contact", label: "Contact" },
+    ];
+    for (const { href, label } of overlayAnchors) {
+      const anchorRegex = new RegExp(
+        `<a\\b[^>]*href="${href}"[^>]*>\\s*${label}\\s*<\\/a>`,
+        "i"
+      );
+      if (!anchorRegex.test(overlayInner)) {
+        overlayOk = false;
+        addViolation(
+          "overlay",
+          `overlay missing anchor href="${href}" with label "${label}"`
+        );
+      }
+    }
+    const overlayConnectRegex = /<a\b[^>]*href="#contact"[^>]*>\s*Connect\s*<\/a>/i;
+    if (!overlayConnectRegex.test(overlayInner)) {
+      overlayOk = false;
+      addViolation(
+        "overlay",
+        'overlay missing Connect anchor with href="#contact"'
+      );
+    }
+  }
+}
+
+// -----------------------------------------------------------------------
+// Check group: overlay CSS state rules (D-01)
+// -----------------------------------------------------------------------
+const overlayHiddenBlock = findCssBlock(
+  cssStripped,
+  `\\[data-nav-overlay\\]${attrEq("data-menu-open", "false")}`
+);
+if (!overlayHiddenBlock || !overlayHiddenBlock.includes("display:none")) {
+  overlayOk = false;
+  addViolation(
+    "overlay",
+    '[data-nav-overlay][data-menu-open="false"] must set display:none'
+  );
+}
+
+const navOpenZBlock = findCssBlock(cssStripped, `nav${attrEq("data-menu-open", "true")}`);
+if (!navOpenZBlock || !navOpenZBlock.includes("z-index:70")) {
+  overlayOk = false;
+  addViolation("overlay", 'nav[data-menu-open="true"] must set z-index:70');
+}
+
+const bodyLockBlock = findCssBlock(cssStripped, `body${attrEq("data-menu-open", "true")}`);
+if (!bodyLockBlock || !bodyLockBlock.includes("overflow:hidden")) {
+  overlayOk = false;
+  addViolation("overlay", 'body[data-menu-open="true"] must set overflow:hidden');
+}
+
+// Descendant-combinator selectors — must be matched against the loose copy,
+// since the fully-stripped copy would collapse the combinator space and
+// make these look like (incorrect) compound selectors.
+const iconCloseHiddenBlock = findCssBlock(
+  cssLoose,
+  `nav${attrEq("data-menu-open", "false")} ${attrEq("data-nav-icon", "close")}`
+);
+if (
+  !iconCloseHiddenBlock ||
+  !iconCloseHiddenBlock.replace(/\s+/g, "").includes("display:none")
+) {
+  overlayOk = false;
+  addViolation(
+    "overlay",
+    'nav[data-menu-open="false"] [data-nav-icon="close"] must set display:none'
+  );
+}
+
+const iconMenuHiddenBlock = findCssBlock(
+  cssLoose,
+  `nav${attrEq("data-menu-open", "true")} ${attrEq("data-nav-icon", "menu")}`
+);
+if (
+  !iconMenuHiddenBlock ||
+  !iconMenuHiddenBlock.replace(/\s+/g, "").includes("display:none")
+) {
+  overlayOk = false;
+  addViolation(
+    "overlay",
+    'nav[data-menu-open="true"] [data-nav-icon="menu"] must set display:none'
+  );
+}
+
+// -----------------------------------------------------------------------
+// Check group: overlay behaviour script (D-01) — vanilla JS only
+// -----------------------------------------------------------------------
+let overlayjsOk = true;
+
+const inlineScriptBodies = [
+  ...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi),
+].map((m) => m[1]);
+const jsFiles = allFiles.filter((f) => extname(f).toLowerCase() === ".js");
+let scriptText = inlineScriptBodies.join("\n");
+for (const f of jsFiles) {
+  scriptText += "\n" + readFileSync(f, "utf8");
+}
+
+const requiredLiterals = [
+  "data-nav-toggle",
+  "nav-overlay",
+  "data-menu-open",
+  "aria-expanded",
+  "Escape",
+  "Tab",
+  "matchMedia",
+  "Fechar menu de navegação",
+  "Abrir menu de navegação",
+];
+for (const literal of requiredLiterals) {
+  if (!scriptText.includes(literal)) {
+    overlayjsOk = false;
+    addViolation("overlayjs", `built script text missing literal "${literal}"`);
+  }
+}
+
+// Source-level checks on Nav.astro — the machine-checkable form of "vanilla
+// JS only, no framework island, no unprocessed inline script".
+const navAstroPath = join("src", "components", "Nav.astro");
+if (!existsSync(navAstroPath)) {
+  overlayjsOk = false;
+  addViolation("overlayjs", `${navAstroPath} not found`);
+} else {
+  const navAstroSrc = readFileSync(navAstroPath, "utf8");
+  if (!/<script\b/.test(navAstroSrc)) {
+    overlayjsOk = false;
+    addViolation("overlayjs", "src/components/Nav.astro must contain a <script tag");
+  }
+  if (/<script\b[^>]*\bis:inline\b/.test(navAstroSrc)) {
+    overlayjsOk = false;
+    addViolation(
+      "overlayjs",
+      "src/components/Nav.astro <script> must not use is:inline (bypasses Astro's CSP processing)"
+    );
+  }
+  if (/\bclient:/.test(navAstroSrc)) {
+    overlayjsOk = false;
+    addViolation(
+      "overlayjs",
+      "src/components/Nav.astro must not contain a client: directive (no framework island)"
+    );
+  }
+  if (
+    /from\s+["'](react|vue|svelte|preact|solid-js|alpinejs)/.test(navAstroSrc)
+  ) {
+    overlayjsOk = false;
+    addViolation(
+      "overlayjs",
+      "src/components/Nav.astro must not import a UI framework"
+    );
+  }
+}
+
+// -----------------------------------------------------------------------
 // Print violations + summary line.
 // -----------------------------------------------------------------------
 for (const v of violations) {
@@ -333,7 +659,9 @@ console.log(
     landmarksOk ? "ok" : "fail"
   } skiplink=${skiplinkOk ? "ok" : "fail"} nav=${navOk ? "ok" : "fail"} brand=${
     brandOk ? "ok" : "fail"
-  } focuscss=${focuscssOk ? "ok" : "fail"} violations=${violations.length}`
+  } focuscss=${focuscssOk ? "ok" : "fail"} overlay=${
+    overlayOk ? "ok" : "fail"
+  } overlayjs=${overlayjsOk ? "ok" : "fail"} violations=${violations.length}`
 );
 
 process.exit(violations.length === 0 ? 0 : 1);
