@@ -135,3 +135,7 @@ None — no external service configuration required. Chromium was already presen
 ---
 *Phase: 04-seo-accessibility-polish*
 *Completed: 2026-09-03*
+
+## Self-Check: PASSED
+
+Both created/modified files (`scripts/verify-a11y.mjs`, `package.json`) and this SUMMARY.md verified present on disk. All three commit hashes (`75b12a0`, `268297f`, `a286c43`) verified present in `git log`.
