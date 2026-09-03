@@ -11,6 +11,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
+    "generate:favicons": "node scripts/generate-favicons.mjs",
     "verify:sec01": "node scripts/verify-no-external-origins.mjs",
     "verify:tokens": "node scripts/verify-design-tokens.mjs",
     "verify:shell": "node scripts/verify-shell.mjs",
