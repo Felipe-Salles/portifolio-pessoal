@@ -24,7 +24,7 @@
 //   OG-image service is used (T-04-02-03) — verify:sec01 keeps external
 //   origins out of dist/ regardless.
 
-import { existsSync, writeFileSync } from "node:fs";
+import { existsSync, writeFileSync, copyFileSync } from "node:fs";
 import { chromium } from "playwright";
 import { preview } from "astro";
 
@@ -76,6 +76,26 @@ try {
   console.log(
     `OG-IMAGE SUMMARY outputs=public/og-image.png,dist/og-image.png dimensions=1200x630 bytes=${buffer.length}`,
   );
+} catch (err) {
+  // Make the committed public/og-image.png's documented "guaranteed
+  // fallback" (see file header) actually true: a Chromium/Playwright
+  // failure here (missing browser download, sandbox restrictions on the
+  // build host, page.goto timeout, etc.) must not fail the entire
+  // production build when a previously-committed, valid OG image already
+  // exists — astro build already copied it into dist/og-image.png.
+  console.error(`generate-og-image: regeneration failed (${err.message})`);
+  if (existsSync("public/og-image.png")) {
+    console.error(
+      "generate-og-image: falling back to the previously-committed public/og-image.png",
+    );
+    copyFileSync("public/og-image.png", "dist/og-image.png");
+  } else {
+    // No committed fallback exists anywhere — this really is fatal, per
+    // the "never silently ship a stale/missing preview image" contract.
+    fail(
+      `generate-og-image: no committed public/og-image.png fallback exists — cannot recover from: ${err.message}`,
+    );
+  }
 } finally {
   if (browser) {
     await browser.close();
