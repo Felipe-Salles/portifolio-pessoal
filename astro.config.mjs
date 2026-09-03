@@ -3,11 +3,24 @@
 import { defineConfig } from "astro/config";
 import tailwindcss from "@tailwindcss/vite";
 import icon from "astro-icon";
+// Source: 04-RESEARCH.md Code Examples "astro.config.mjs additions" (verified
+// against docs.astro.build/en/guides/integrations-guide/sitemap/) — SEO-03.
+import sitemap from "@astrojs/sitemap";
 
 export default defineConfig({
   // Astro 7's default, stated explicitly per CLAUDE.md.
   output: "static",
-  integrations: [icon()],
+  // TODO(Phase 5): replace with the real production domain once DEPLOY-01
+  // assigns it — every og:image/canonical/sitemap/robots.txt URL depends on
+  // this. ".example" is an RFC 2606-reserved placeholder TLD, guaranteed
+  // never to resolve to a real site.
+  site: "https://portfolio-felipe-salles.example",
+  integrations: [
+    icon(),
+    sitemap({
+      filter: (page) => !page.includes("/og-template/"),
+    }),
+  ],
   vite: {
     plugins: [tailwindcss()],
   },

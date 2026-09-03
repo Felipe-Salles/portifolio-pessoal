@@ -15,6 +15,12 @@
 //     * @font-face src: url(...) targeting an absolute http(s) URL
 // - Does NOT flag the bare string "material-symbols" — SEC-01 is about origins,
 //   not identifiers (astro-icon legitimately inlines that name in attributes).
+// - <link> allowlist: an absolute href is permitted when and only when
+//   rel === "canonical" (strict equality, lowercased, never a substring/regex
+//   match). rel="canonical" is a metadata declaration that triggers no
+//   network fetch, so it is not an external origin under SEC-01. Every other
+//   rel value (preload, stylesheet, icon, preconnect, dns-prefetch, ...)
+//   still fails exactly as before (04-01-PLAN.md Task 3).
 // - Always prints exactly one summary line before exiting:
 //     SEC01 SUMMARY files=<n> woff2=<n> fontface=<n> inline_svg=<n> external_refs=<n>
 // - Exits 0 only when external_refs=0.
@@ -116,7 +122,9 @@ for (const filePath of allFiles) {
     const rel = relMatch ? relMatch[1].toLowerCase() : null;
 
     if (href && /^https?:\/\//i.test(href)) {
-      if (rel === "preconnect" || rel === "dns-prefetch") {
+      if (rel === "canonical") {
+        // Allowlisted: a metadata declaration, not a fetched resource.
+      } else if (rel === "preconnect" || rel === "dns-prefetch") {
         addViolation(
           filePath,
           linkMatch.index,
