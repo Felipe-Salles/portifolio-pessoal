@@ -19,6 +19,7 @@
     "verify": "npm run build && npm run verify:sec01 && npm run verify:tokens && npm run verify:shell && npm run verify:sections && npm run verify:schema"
   },
   "dependencies": {
+    "@astrojs/sitemap": "^3.7.4",
     "@fontsource/inter": "^5.3.0",
     "@fontsource/jetbrains-mono": "^5.3.0",
     "@fontsource/lexend": "^5.3.0",
@@ -30,6 +31,11 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
-    "typescript": "^6.0.3"
+    "@axe-core/playwright": "^4.13.0",
+    "playwright": "^1.62.1",
+    "png-to-ico": "^3.0.2",
+    "sharp": "^0.35.4",
+    "typescript": "^6.0.3",
+    "wcag-contrast": "^3.0.0"
   }
 }
