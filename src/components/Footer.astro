@@ -1,0 +1,41 @@
+---
+// Source: Arquivos de design/code.html lines 399-409 (footer markup),
+// adapted per 02-PATTERNS.md "src/components/Footer.astro" section and
+// 02-UI-SPEC.md "Footer (D-03)".
+//
+// Mandatory deviations from the prototype:
+// - Copyright line: replaced the prototype's fictional persona copyright
+//   with a build-time year + the existing site.brand placeholder (D-03).
+// - Link row: replaced the three hardcoded anchors with a map over
+//   site.socials (D-03) — adding/removing an entry there changes the
+//   footer with no markup edit. Uses only the label and href fields of each
+//   entry, never the icon-name field — icon-circle treatment belongs to
+//   the Phase 3 Contact section.
+// - Typography: both text blocks use the 14px/500 mono-label token, not the
+//   prototype's mixed pairing of the label token with the smaller 13px/400
+//   monospace body token — carrying both would introduce a third font
+//   weight and break the project's two-weight typography budget (UI-SPEC
+//   Typography section).
+//
+// Fully static: no Props interface, no client-side script, no icons.
+import { site } from "../data/site.ts";
+---
+
+<footer class="bg-surface-container-lowest w-full mt-section-gap border-t border-outline-variant/20">
+  <div class="flex flex-col md:flex-row justify-between items-center w-full px-margin-mobile md:px-gutter py-unit gap-4 max-w-container-max mx-auto h-24">
+    <div class="font-mono-label text-mono-label text-on-surface-variant">
+      © {new Date().getFullYear()} {site.brand} — todos os direitos reservados
+    </div>
+    <div data-footer-socials class="flex gap-6 font-mono-label text-mono-label uppercase text-on-surface-variant">
+      {site.socials.map((s) => (
+        <a
+          href={s.href}
+          rel="noopener noreferrer"
+          class="hover:text-primary-container transition-colors duration-300"
+        >
+          {s.label}
+        </a>
+      ))}
+    </div>
+  </div>
+</footer>
