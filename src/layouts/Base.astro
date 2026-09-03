@@ -28,12 +28,29 @@ import "@fontsource/jetbrains-mono/500.css";
 import "@fontsource/jetbrains-mono/700.css";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
+import { site } from "../data/site.ts";
 
+// Source: 04-RESEARCH.md Architecture Patterns Pattern 1 (SEO-01/SEO-02) —
+// description is required (every page passes one explicitly, no default);
+// ogImage/ogType default to the one shared OG image (D-03).
 interface Props {
   title: string;
+  description: string;
+  ogImage?: string;
+  ogType?: "website" | "article";
 }
 
-const { title } = Astro.props;
+const {
+  title,
+  description,
+  ogImage = "/og-image.png",
+  ogType = "website",
+} = Astro.props;
+
+// Absolute URLs are mandatory for canonical/OG/Twitter tags (Open Graph
+// unfurlers ignore relative image/url values) — never a bare string.
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const ogImageURL = new URL(ogImage, Astro.site);
 ---
 
 <html lang="pt-BR">
@@ -41,13 +58,34 @@ const { title } = Astro.props;
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL.href} />
+
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImageURL.href} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:url" content={canonicalURL.href} />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:site_name" content={site.brand} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageURL.href} />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   </head>
   <body class="bg-background text-on-background bg-grid-pattern relative min-h-screen">
     <a href="#main-content" class="skip-link fixed top-4 left-4 z-[100] glass-panel border-glow-cyan px-4 py-2 rounded font-mono-label text-mono-label text-primary-container uppercase tracking-widest"
       >Pular para o conteúdo</a
     >
-    <div class="glow-cloud-top-right"></div>
-    <div class="glow-cloud-bottom-left"></div>
+    <div class="glow-cloud-top-right" aria-hidden="true"></div>
+    <div class="glow-cloud-bottom-left" aria-hidden="true"></div>
     <Nav />
     <main id="main-content" class="relative z-10 pt-32 pb-section-gap px-margin-mobile md:px-gutter max-w-container-max mx-auto space-y-section-gap">
       <slot />

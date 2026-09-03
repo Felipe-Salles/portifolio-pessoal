@@ -30,6 +30,12 @@ export const site = {
   // Hero subtitle (HERO-01).
   heroSubtitle: "PLACEHOLDER — subtítulo a definir",
 
+  // Meta description for SEO-01 (150-160 chars target). Base.astro's
+  // default `description` prop value for "/"; 404.astro (plan 04-02)
+  // overrides it with its own page-specific literal instead of reading
+  // this field.
+  metaDescription: "PLACEHOLDER — meta description a definir (150–160 caracteres)",
+
   // Dossier bio — an array of paragraph strings; the prototype renders two
   // <p> elements, so an array keeps that flexible (DOSS-01).
   bio: [

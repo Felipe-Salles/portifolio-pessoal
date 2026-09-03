@@ -72,7 +72,7 @@ const restProjects = allProjects.filter((p) => !p.data.featured).sort(byOrder);
 const projects = [...featuredProjects, ...restProjects];
 ---
 
-<Base title="Portfólio Dev — Felipe Salles">
+<Base title="Portfólio Dev — Felipe Salles" description={site.metaDescription}>
   <section class="min-h-[716px] flex flex-col justify-center items-start">
     <div class="inline-flex items-center gap-2 px-3 py-1 mb-8 border border-outline-variant/50 bg-surface-container/50 rounded font-mono-label text-mono-label text-primary-container">
       <span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span>
@@ -92,7 +92,7 @@ const projects = [...featuredProjects, ...restProjects];
       class="btn-primary bg-primary-container text-on-primary-container font-mono-label text-mono-label uppercase tracking-widest px-8 py-4 rounded transition-all duration-300 cursor-pointer active:scale-95 inline-flex items-center gap-2"
     >
       VER PROJETOS
-      <Icon name="material-symbols:arrow-forward" class="text-xl" />
+      <Icon name="material-symbols:arrow-forward" class="text-xl" aria-hidden="true" />
     </a>
   </section>
 
@@ -154,7 +154,7 @@ const projects = [...featuredProjects, ...restProjects];
             />
           ) : (
             <div class="cover-fallback w-full h-48 border-b border-outline-variant/30 flex items-center justify-center bg-linear-to-br from-primary-container/15 via-surface-container to-surface-container-high transition-all duration-500">
-              <Icon name="material-symbols:code" class="cover-fallback-icon w-12 h-12 text-primary-container/60 transition-all duration-500" />
+              <Icon name="material-symbols:code" class="cover-fallback-icon w-12 h-12 text-primary-container/60 transition-all duration-500" aria-hidden="true" />
             </div>
           )}
           <div class="p-6 space-y-4">
