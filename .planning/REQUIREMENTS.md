@@ -37,7 +37,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [ ] **LAY-01**: Site é responsivo, com reflow mobile conforme DESIGN.md (margens 20px, grid adaptativo, background grid reduzido)
 - [ ] **LAY-02**: Visual do site corresponde fielmente aos tokens do DESIGN.md (cores, tipografia, espaçamento, componentes) e ao protótipo em `screen.png`
-- [ ] **LAY-03**: Navegação (Nav) inclui logo, links das seções e botão "Connect", com toggle mobile funcional sem framework JS
+- [x] **LAY-03**: Navegação (Nav) inclui logo, links das seções e botão "Connect", com toggle mobile funcional sem framework JS
 
 ### SEO & Descoberta
 
@@ -50,7 +50,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Acessibilidade
 
-- [ ] **A11Y-01**: Navegação é semântica (`<nav>`, `<main>`, hierarquia de headings) e totalmente navegável por teclado, com estados de foco visíveis (glow cyan)
+- [x] **A11Y-01**: Navegação é semântica (`<nav>`, `<main>`, hierarquia de headings) e totalmente navegável por teclado, com estados de foco visíveis (glow cyan)
 - [ ] **A11Y-02**: Site tem página 404 customizada reaproveitando layout e nav
 - [ ] **A11Y-03**: Imagens e ícones têm alt text descritivo (não nomes de arquivo)
 - [ ] **A11Y-04**: Contraste de texto/painéis glassmorphism passa em verificação WCAG (Lighthouse/axe) contra o fundo renderizado real, não apenas os valores de token do DESIGN.md
@@ -119,14 +119,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CONT-01 | Phase 3 | Pending |
 | LAY-01 | Phase 3 | Pending |
 | LAY-02 | Phase 3 | Pending |
-| LAY-03 | Phase 2 | Pending |
+| LAY-03 | Phase 2 | Complete |
 | SEO-01 | Phase 4 | Pending |
 | SEO-02 | Phase 4 | Pending |
 | SEO-03 | Phase 4 | Pending |
 | SEO-04 | Phase 4 | Pending |
 | SEO-05 | Phase 4 | Pending |
 | SEO-06 | Phase 2 | Pending |
-| A11Y-01 | Phase 2 | Pending |
+| A11Y-01 | Phase 2 | Complete |
 | A11Y-02 | Phase 4 | Pending |
 | A11Y-03 | Phase 4 | Pending |
 | A11Y-04 | Phase 4 | Pending |
