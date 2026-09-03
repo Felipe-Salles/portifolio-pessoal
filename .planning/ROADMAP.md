@@ -13,7 +13,7 @@ The site is built bottom-up: first a secure, self-hosted build foundation (no ex
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation & Design System** - Secure, self-hosted build pipeline and design tokens with zero external script/font/icon origins (completed 2026-09-02)
-- [ ] **Phase 2: Layout & Navigation Shell** - Shared nav/footer/page shell matching the design system, in PT-BR, fully keyboard-accessible
+- [x] **Phase 2: Layout & Navigation Shell** - Shared nav/footer/page shell matching the design system, in PT-BR, fully keyboard-accessible (completed 2026-09-03)
 - [ ] **Phase 3: Content Sections** - Hero, Dossier, Tech Stack, Projects, and Contact sections rendered and responsive per the prototype
 - [ ] **Phase 4: SEO, Accessibility & Polish** - Discoverability, share previews, custom 404, and accessibility verification
 - [ ] **Phase 5: Security Hardening & Deploy** - Production security headers verified live on Vercel over HTTPS
@@ -96,7 +96,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation & Design System | 3/3 | Complete   | 2026-09-02 |
-| 2. Layout & Navigation Shell | 2/3 | In Progress|  |
+| 2. Layout & Navigation Shell | 3/3 | Complete   | 2026-09-03 |
 | 3. Content Sections | 0/TBD | Not started | - |
 | 4. SEO, Accessibility & Polish | 0/TBD | Not started | - |
 | 5. Security Hardening & Deploy | 0/TBD | Not started | - |
