@@ -1,0 +1,72 @@
+---
+// Source: Arquivos de design/code.html lines 225-244 (prototype nav markup),
+// adapted per 02-PATTERNS.md "src/components/Nav.astro" section and
+// 02-UI-SPEC.md "Nav bar (LAY-03)" / "Connect button (D-02)" / "Semantic
+// landmarks (SEO-06, A11Y-01)".
+//
+// Mandatory corrections from the prototype (all contract, not preference):
+// - Wrapped in <nav aria-label="Navegação principal"> (semantic landmark).
+// - Brand wordmark drops the prototype's extra bold-weight override (it
+//   conflicts with the --text-headline-md --font-weight: 600 token;
+//   DESIGN.md wins over code.html) and reads {site.brand}, never the
+//   prototype's hardcoded fictional persona string.
+// - Connect is a real <a href="#contact"> (D-02), never a <button>. Uses the
+//   bare `rounded` utility (the prototype's radius class suffix is not a
+//   real Tailwind class name) and drops the redundant duplicate
+//   transition-transform.
+// - Mobile toggle uses astro-icon's inline <Icon /> instead of the
+//   prototype's icon-font <span> (Material Symbols outlined glyph), which
+//   would reintroduce an external origin banned by SEC-01.
+//
+// This plan (02-01) renders the mobile toggle as inert markup only — no
+// behaviour, no client-side script tag. Plan 02-02 owns the overlay markup
+// and its script.
+import { Icon } from "astro-icon/components";
+import { site } from "../data/site.ts";
+---
+
+<nav
+  aria-label="Navegação principal"
+  data-menu-open="false"
+  class="bg-background/60 backdrop-blur-xl border-b border-outline-variant/30 shadow-[0_0_15px_rgba(0,240,255,0.1)] fixed top-0 w-full z-50"
+>
+  <div class="flex justify-between items-center w-full px-margin-mobile md:px-gutter py-4 max-w-container-max mx-auto">
+    <div class="font-headline-md text-headline-md text-primary-container tracking-tighter">
+      {site.brand}
+    </div>
+    <div class="hidden md:flex items-center gap-8 font-mono-label text-mono-label uppercase tracking-widest">
+      <a
+        class="text-on-surface-variant hover:text-primary-container transition-colors duration-300"
+        href="#dossier">Dossier</a
+      >
+      <a
+        class="text-on-surface-variant hover:text-primary-container transition-colors duration-300"
+        href="#stack">Stack</a
+      >
+      <a
+        class="text-on-surface-variant hover:text-primary-container transition-colors duration-300"
+        href="#projects">Projects</a
+      >
+      <a
+        class="text-on-surface-variant hover:text-primary-container transition-colors duration-300"
+        href="#contact">Contact</a
+      >
+    </div>
+    <a
+      href="#contact"
+      class="hidden md:block hover:bg-primary-container/10 transition-all duration-200 active:scale-95 px-4 py-2 border border-primary-container text-primary-container font-mono-label text-mono-label uppercase tracking-widest rounded"
+      >Connect</a
+    >
+    <!-- Mobile Menu Toggle — inert in this plan; plan 02-02 wires the overlay + script. -->
+    <button
+      type="button"
+      data-nav-toggle
+      aria-label="Abrir menu de navegação"
+      aria-expanded="false"
+      aria-controls="nav-overlay"
+      class="md:hidden inline-flex items-center justify-center w-11 h-11 text-primary-container"
+    >
+      <Icon name="material-symbols:menu" data-icon-menu />
+    </button>
+  </div>
+</nav>
