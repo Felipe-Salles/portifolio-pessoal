@@ -45,7 +45,7 @@ const REPRESENTATIVE_UTILITIES = [
   ".text-mono-label",
   ".font-mono-label",
   ".px-margin-mobile",
-  ".gap-gutter",
+  ".px-gutter",
   ".max-w-container-max",
   ".rounded",
   ".rounded-lg",
@@ -318,9 +318,26 @@ for (const key of colorKeys) {
   }
 }
 
+// Phase 3 (03-01-PLAN.md Task 2) broadens this matcher: it used to require a
+// bare, unprefixed, unmodified compiled rule (name immediately followed by
+// `{`), which was only satisfied because Phase 1's token-gallery scaffolding
+// happened to use every representative utility in exactly that form. Real
+// Phase 3 markup legitimately reaches several of these tokens only through a
+// responsive variant (`md:text-display-lg` — the Hero is mobile-first) or an
+// opacity modifier (`border-outline-variant/30`, `/50`, `/20` — always
+// alpha-composited). A representative utility is now satisfied by its bare
+// rule, a variant-prefixed rule (Lightning CSS escapes the variant colon,
+// e.g. `.md\:text-display-lg`), or an opacity-modified rule (Lightning CSS
+// escapes the modifier slash, e.g. `.border-outline-variant\/30`) — and
+// tolerates a trailing `,` as well as `{`, since Lightning CSS groups
+// identical-declaration selectors into comma-separated lists. This only
+// broadens the selector *shape* accepted; it does not weaken which tokens
+// must survive into dist/ (the --color-* loop, DESIGN.md diff and
+// CUSTOM_CLASSES checks are unchanged).
 for (const selector of REPRESENTATIVE_UTILITIES) {
-  const escaped = selector.replace(/[.*+?^${}()|[\]\\:]/g, "\\$&");
-  const re = new RegExp(`${escaped}\\s*\\{`);
+  const name = selector.slice(1); // strip the leading '.'
+  const escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const re = new RegExp(`(?:\\.|\\\\:)${escapedName}(?:\\\\/\\d+)?\\s*[{,]`);
   if (!re.test(distCss)) {
     mismatches.push(`dist/: no rule found for representative utility "${selector}"`);
   }

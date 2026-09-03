@@ -262,8 +262,11 @@ if (!indexAstroSrc) {
   }
 }
 
+// Lightning CSS compiles the source's `@media (max-width: 768px)` into its
+// modern range-syntax equivalent `@media (width<=768px)` in the built
+// output, so both forms are accepted here.
 const mobileGridRe =
-  /@media\(max-width:768px\)\{[^}]*\.bg-grid-pattern\{[^}]*background-size:32px32px/;
+  /@media\((?:max-width:768px|width<=768px)\)\{[^}]*\.bg-grid-pattern\{[^}]*background-size:32px32px/;
 if (!mobileGridRe.test(cssStripped)) {
   containerOk = false;
   addViolation(
