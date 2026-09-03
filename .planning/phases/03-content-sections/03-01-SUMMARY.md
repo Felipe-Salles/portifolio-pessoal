@@ -129,3 +129,7 @@ None - no external service configuration required.
 ---
 *Phase: 03-content-sections*
 *Completed: 2026-09-03*
+
+## Self-Check: PASSED
+
+All key files confirmed present on disk (`scripts/verify-sections.mjs`, `src/layouts/Base.astro`, `scripts/verify-design-tokens.mjs`, `src/pages/index.astro`, `package.json`, this SUMMARY.md). All four commits (`fecea9e`, `e893be2`, `65a1c68`, `44e1cd1`) confirmed present in `git log`.
