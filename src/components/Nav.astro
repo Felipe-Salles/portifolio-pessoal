@@ -18,9 +18,13 @@
 //   prototype's icon-font <span> (Material Symbols outlined glyph), which
 //   would reintroduce an external origin banned by SEC-01.
 //
-// This plan (02-01) renders the mobile toggle as inert markup only — no
-// behaviour, no client-side script tag. Plan 02-02 owns the overlay markup
-// and its script.
+// Plan 02-02 adds the full-screen mobile overlay (D-01) as a sibling of
+// the nav bar — never nested inside it, since the nav's backdrop-blur-xl
+// makes it a containing block for position:fixed descendants and would
+// clip a nested overlay to the nav bar's own box — plus the co-located
+// vanilla script controller below (no framework island, and the script tag
+// is deliberately left unprocessed-opt-out-free so Astro bundles it — see
+// src/styles/global.css for the four CSS state rules this script drives).
 import { Icon } from "astro-icon/components";
 import { site } from "../data/site.ts";
 ---
@@ -57,16 +61,175 @@ import { site } from "../data/site.ts";
       class="hidden md:block hover:bg-primary-container/10 transition-all duration-200 active:scale-95 px-4 py-2 border border-primary-container text-primary-container font-mono-label text-mono-label uppercase tracking-widest rounded"
       >Connect</a
     >
-    <!-- Mobile Menu Toggle — inert in this plan; plan 02-02 wires the overlay + script. -->
+    <!-- Mobile Menu Toggle — both icons are server-rendered inline SVGs;
+         the swap between them is a pure CSS state change (see
+         global.css's icon-swap rules), never a runtime DOM construction.
+         mr-unit (--spacing-unit, 8px, an existing DESIGN.md token) adds
+         supplemental breathing room beyond the row's own px-margin-mobile
+         inset, specifically on this control's trailing edge — WCAG touch-
+         target guidance recommends spacing around a tap target, not just
+         meeting its 44px minimum size, and the button's crisp square hit-
+         box otherwise reads as flush with the viewport edge even though
+         px-margin-mobile is correctly applied. Margin (not padding) is
+         used so the 44px hit target itself is never shrunk. -->
     <button
       type="button"
       data-nav-toggle
       aria-label="Abrir menu de navegação"
       aria-expanded="false"
       aria-controls="nav-overlay"
-      class="md:hidden inline-flex items-center justify-center w-11 h-11 text-primary-container"
+      class="md:hidden inline-flex items-center justify-center w-11 h-11 mr-unit text-primary-container"
     >
-      <Icon name="material-symbols:menu" data-icon-menu />
+      <Icon name="material-symbols:menu" data-nav-icon="menu" />
+      <Icon name="material-symbols:close" data-nav-icon="close" />
     </button>
   </div>
 </nav>
+
+<!-- Mobile full-screen overlay (D-01) — a sibling of the nav bar element
+     above, not nested inside it (see the frontmatter comment above for
+     why). role="dialog" + aria-modal="true" make the focus trap honest for
+     assistive technology; md:hidden guarantees it can never appear on
+     desktop even if a stale open state survives a resize past 768px. -->
+<div
+  id="nav-overlay"
+  data-nav-overlay
+  data-menu-open="false"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Menu de navegação"
+  class="fixed inset-0 z-[60] bg-background/95 backdrop-blur-xl flex flex-col items-center justify-center gap-8 md:hidden"
+>
+  <a
+    class="font-headline-md text-headline-md uppercase tracking-widest text-on-surface-variant hover:text-primary-container transition-colors duration-300"
+    href="#dossier">Dossier</a
+  >
+  <a
+    class="font-headline-md text-headline-md uppercase tracking-widest text-on-surface-variant hover:text-primary-container transition-colors duration-300"
+    href="#stack">Stack</a
+  >
+  <a
+    class="font-headline-md text-headline-md uppercase tracking-widest text-on-surface-variant hover:text-primary-container transition-colors duration-300"
+    href="#projects">Projects</a
+  >
+  <a
+    class="font-headline-md text-headline-md uppercase tracking-widest text-on-surface-variant hover:text-primary-container transition-colors duration-300"
+    href="#contact">Contact</a
+  >
+  <a
+    href="#contact"
+    class="hover:bg-primary-container/10 transition-all duration-200 active:scale-95 px-4 py-2 border border-primary-container text-primary-container font-mono-label text-mono-label uppercase tracking-widest rounded"
+    >Connect</a
+  >
+</div>
+
+<script>
+  // Mobile overlay controller (D-01) — vanilla JS, no framework island.
+  // This tag has no unprocessed-script opt-out attribute, so Astro
+  // bundles it automatically, which is what keeps this compatible with
+  // Phase 5's script-src 'self' CSP.
+  //
+  // setOpen() is the single writer of all overlay state: it never reads its
+  // own previous state from anywhere except the data-menu-open attribute it
+  // wrote last, so there is exactly one source of truth.
+  const toggleEl = document.querySelector<HTMLElement>("[data-nav-toggle]");
+  const overlayEl = document.getElementById("nav-overlay");
+  const navEl = toggleEl?.closest("nav");
+
+  if (toggleEl && overlayEl && navEl) {
+    // Non-null aliases: TypeScript's control-flow narrowing above doesn't
+    // carry into the nested functions/closures below, since the guarded
+    // consts could in principle be reassigned before those closures run.
+    const toggle: HTMLElement = toggleEl;
+    const overlay: HTMLElement = overlayEl;
+    const nav: HTMLElement = navEl;
+
+    // Focus-trap membership: the toggle button (outside the overlay in the
+    // DOM, but the overlay's only close control — a trap that excludes it
+    // leaves the visitor with no keyboard way out) followed by every
+    // overlay link, in DOM order.
+    const getTrapMembers = (): HTMLElement[] => [
+      toggle,
+      ...Array.from(overlay.querySelectorAll<HTMLElement>("a[href]")),
+    ];
+
+    function setOpen(open: boolean, restoreFocus: boolean) {
+      const state = open ? "true" : "false";
+      nav.setAttribute("data-menu-open", state);
+      overlay.setAttribute("data-menu-open", state);
+      if (open) {
+        document.body.setAttribute("data-menu-open", "true");
+      } else {
+        document.body.removeAttribute("data-menu-open");
+      }
+      toggle.setAttribute("aria-expanded", state);
+      toggle.setAttribute(
+        "aria-label",
+        open ? "Fechar menu de navegação" : "Abrir menu de navegação"
+      );
+      if (open) {
+        const members = getTrapMembers();
+        const firstLink = members[1];
+        firstLink?.focus();
+      } else if (restoreFocus) {
+        toggle.focus();
+      }
+    }
+
+    toggle.addEventListener("click", () => {
+      const isOpen = toggle.getAttribute("aria-expanded") === "true";
+      setOpen(!isOpen, true);
+    });
+
+    document.addEventListener("keydown", (event: KeyboardEvent) => {
+      const isOpen = toggle.getAttribute("aria-expanded") === "true";
+      if (!isOpen) return;
+
+      if (event.key === "Escape") {
+        setOpen(false, true);
+        return;
+      }
+
+      if (event.key === "Tab") {
+        const members = getTrapMembers();
+        const first = members[0];
+        const last = members[members.length - 1];
+        const active = document.activeElement;
+        const activeIndex = active ? members.indexOf(active as HTMLElement) : -1;
+
+        if (activeIndex === -1) {
+          event.preventDefault();
+          first?.focus();
+          return;
+        }
+        if (event.shiftKey && active === first) {
+          event.preventDefault();
+          last?.focus();
+        } else if (!event.shiftKey && active === last) {
+          event.preventDefault();
+          first?.focus();
+        }
+      }
+    });
+
+    overlay.querySelectorAll<HTMLElement>("a[href]").forEach((link) => {
+      link.addEventListener("click", () => {
+        // Do not preventDefault — the hash navigation must still happen,
+        // and focus is left where the browser puts it rather than yanked
+        // back to the toggle.
+        setOpen(false, false);
+      });
+    });
+
+    // Resizing to desktop with the overlay open hides it via md:hidden but
+    // would otherwise leave body scroll-locked with no visible control to
+    // unlock it — this listener closes the overlay state on that crossing.
+    const desktopQuery = window.matchMedia("(min-width: 768px)");
+    desktopQuery.addEventListener("change", (event) => {
+      const isOpen = toggle.getAttribute("aria-expanded") === "true";
+      if (event.matches && isOpen) {
+        setOpen(false, false);
+      }
+    });
+  }
+</script>
