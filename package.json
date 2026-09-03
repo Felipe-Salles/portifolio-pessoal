@@ -8,10 +8,11 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && node scripts/generate-og-image.mjs",
     "preview": "astro preview",
     "check": "astro check",
     "generate:favicons": "node scripts/generate-favicons.mjs",
+    "generate:og": "node scripts/generate-og-image.mjs",
     "verify:sec01": "node scripts/verify-no-external-origins.mjs",
     "verify:tokens": "node scripts/verify-design-tokens.mjs",
     "verify:shell": "node scripts/verify-shell.mjs",

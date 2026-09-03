@@ -1,0 +1,30 @@
+---
+// Source: 04-UI-SPEC.md "404 page (A11Y-02, D-05-D-08)" — this markup is the
+// approved final contract, copied verbatim, not illustrative.
+//
+// No <Icon>, no site import, no getCollection, no Image — D-07 scopes this
+// page to typography-only primitives. Base already renders <Nav />/<Footer />
+// plus the skip link and <main>, so this page adds none of its own
+// (scripts/verify-shell.mjs enforces non-nested landmarks).
+import Base from "../layouts/Base.astro";
+---
+
+<Base
+  title="Página não encontrada — [Nome/Marca Aqui]"
+  description="A rota solicitada não existe neste sistema."
+>
+  <section class="min-h-[60vh] flex flex-col items-center justify-center text-center glass-panel border-glow-cyan rounded-xl p-12 max-w-2xl mx-auto">
+    <p class="font-mono-label text-mono-label text-primary-container uppercase tracking-widest mb-4">
+      &gt;_ ERRO 404 — ROTA NÃO ENCONTRADA
+    </p>
+    <h1 class="font-headline-md text-headline-md text-white mb-8">
+      O sistema não localizou este caminho.
+    </h1>
+    <a
+      href="/"
+      class="btn-primary bg-primary-container text-on-primary-container font-mono-label text-mono-label uppercase tracking-widest px-8 py-4 rounded transition-all duration-300 cursor-pointer active:scale-95 inline-flex items-center gap-2"
+    >
+      VOLTAR AO INÍCIO
+    </a>
+  </section>
+</Base>
