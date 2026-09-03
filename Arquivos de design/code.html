@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ARCHITECT - Portfolio</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Lexend:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        /* CSS resets and custom styles */
+        body { margin: 0; padding: 0; overflow-x: hidden; }
+        
+        /* Atmospheric Glows */
+        .glow-cloud-top-right {
+            position: absolute; top: -20vh; right: -10vw;
+            width: 60vw; height: 60vw;
+            background: radial-gradient(circle, rgba(0, 240, 255, 0.05) 0%, rgba(17, 20, 23, 0) 70%);
+            z-index: 0; pointer-events: none;
+        }
+        .glow-cloud-bottom-left {
+            position: absolute; bottom: -20vh; left: -10vw;
+            width: 60vw; height: 60vw;
+            background: radial-gradient(circle, rgba(0, 240, 255, 0.03) 0%, rgba(17, 20, 23, 0) 70%);
+            z-index: 0; pointer-events: none;
+        }
+        
+        /* Grid Background */
+        .bg-grid-pattern {
+            background-size: 64px 64px;
+            background-image: 
+                linear-gradient(to right, rgba(185, 202, 203, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(185, 202, 203, 0.03) 1px, transparent 1px);
+        }
+        @media (max-width: 768px) {
+            .bg-grid-pattern {
+                background-size: 32px 32px;
+            }
+        }
+
+        /* Glassmorphism */
+        .glass-panel {
+            background: rgba(20, 27, 34, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Cyan Glow Stroke */
+        .border-glow-cyan {
+            border: 1px solid #00F0FF;
+            box-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
+        }
+        
+        /* Primary Button Hover */
+        .btn-primary:hover {
+            box-shadow: 0 0 16px rgba(0, 240, 255, 0.6);
+            background-color: #7df4ff; /* primary-fixed */
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #111417; }
+        ::-webkit-scrollbar-thumb { background: #323539; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #849495; }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-surface-variant": "#b9cacb",
+                      "error": "#ffb4ab",
+                      "surface-tint": "#00dbe9",
+                      "surface-container-lowest": "#0c0e12",
+                      "tertiary-container": "#d3dae4",
+                      "secondary": "#c2c7ce",
+                      "background": "#111417",
+                      "on-secondary-fixed": "#171c21",
+                      "on-tertiary-container": "#585f68",
+                      "on-error-container": "#ffdad6",
+                      "on-primary-container": "#006970",
+                      "on-tertiary": "#2a3139",
+                      "tertiary-fixed-dim": "#c0c7d1",
+                      "surface-variant": "#323539",
+                      "inverse-surface": "#e1e2e7",
+                      "surface-dim": "#111417",
+                      "on-tertiary-fixed": "#151c23",
+                      "secondary-container": "#42474d",
+                      "on-surface": "#e1e2e7",
+                      "primary-container": "#00f0ff",
+                      "outline": "#849495",
+                      "surface-container-low": "#191c1f",
+                      "on-primary-fixed-variant": "#004f54",
+                      "surface": "#111417",
+                      "inverse-primary": "#006970",
+                      "tertiary-fixed": "#dce3ed",
+                      "on-error": "#690005",
+                      "primary-fixed-dim": "#00dbe9",
+                      "on-secondary-fixed-variant": "#42474d",
+                      "tertiary": "#f1f6ff",
+                      "surface-container-highest": "#323539",
+                      "surface-container-high": "#282a2e",
+                      "surface-container": "#1d2023",
+                      "on-tertiary-fixed-variant": "#40474f",
+                      "on-secondary": "#2c3137",
+                      "secondary-fixed-dim": "#c2c7ce",
+                      "primary-fixed": "#7df4ff",
+                      "on-background": "#e1e2e7",
+                      "outline-variant": "#3b494b",
+                      "primary": "#dbfcff",
+                      "on-secondary-container": "#b1b5bc",
+                      "inverse-on-surface": "#2e3134",
+                      "surface-bright": "#37393d",
+                      "secondary-fixed": "#dee3ea",
+                      "on-primary": "#00363a",
+                      "on-primary-fixed": "#002022",
+                      "error-container": "#93000a"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "gutter": "24px",
+                      "unit": "8px",
+                      "container-max": "1280px",
+                      "section-gap": "160px",
+                      "margin-mobile": "20px"
+              },
+              "fontFamily": {
+                      "headline-md": [
+                              "Lexend"
+                      ],
+                      "mono-label": [
+                              "JetBrains Mono"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "display-lg-mobile": [
+                              "Lexend"
+                      ],
+                      "display-lg": [
+                              "Lexend"
+                      ],
+                      "mono-code": [
+                              "JetBrains Mono"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "headline-md": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "mono-label": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display-lg-mobile": [
+                              "40px",
+                              {
+                                      "lineHeight": "48px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "display-lg": [
+                              "72px",
+                              {
+                                      "lineHeight": "80px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "mono-code": [
+                              "13px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+</head>
+<body class="bg-background text-on-background bg-grid-pattern relative min-h-screen">
+<!-- Atmospheric Layers -->
+<div class="glow-cloud-top-right"></div>
+<div class="glow-cloud-bottom-left"></div>
+<!-- TopNavBar -->
+<nav class="bg-background/60 backdrop-blur-xl border-b border-outline-variant/30 shadow-[0_0_15px_rgba(0,240,255,0.1)] fixed top-0 w-full z-50">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-gutter py-4 max-w-container-max mx-auto">
+<div class="font-headline-md text-headline-md font-bold text-primary-container tracking-tighter">
+                SYSTEM.CORE
+            </div>
+<div class="hidden md:flex items-center gap-8 font-mono-label text-mono-label uppercase tracking-widest">
+<a class="text-on-surface-variant hover:text-primary-container transition-colors duration-300" href="#dossier">Dossier</a>
+<a class="text-on-surface-variant hover:text-primary-container transition-colors duration-300" href="#stack">Stack</a>
+<a class="text-on-surface-variant hover:text-primary-container transition-colors duration-300" href="#projects">Projects</a>
+<a class="text-on-surface-variant hover:text-primary-container transition-colors duration-300" href="#contact">Contact</a>
+</div>
+<button class="hidden md:block hover:bg-primary-container/10 transition-all duration-200 cursor-pointer active:scale-95 transition-transform px-4 py-2 border border-primary-container text-primary-container font-mono-label text-mono-label uppercase tracking-widest rounded-DEFAULT">
+                Connect
+            </button>
+<!-- Mobile Menu Toggle -->
+<button class="md:hidden text-primary-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">menu</span>
+</button>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="relative z-10 pt-32 pb-section-gap px-margin-mobile md:px-gutter max-w-container-max mx-auto space-y-section-gap">
+<!-- Hero Section -->
+<section class="min-h-[716px] flex flex-col justify-center items-start">
+<div class="inline-flex items-center gap-2 px-3 py-1 mb-8 border border-outline-variant/50 bg-surface-container/50 rounded-DEFAULT font-mono-code text-mono-code text-primary-container">
+<span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span>
+                &gt;_ AVAILABLE FOR NEW PROJECTS
+            </div>
+<h1 class="font-display-lg-mobile text-display-lg-mobile md:font-display-lg md:text-display-lg font-bold tracking-tight text-white mb-6 uppercase">
+                ARCHITECT
+            </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mb-12">
+                Building the future, one line of code at a time. Engineering scalable, resilient systems with uncompromising precision.
+            </p>
+<a class="btn-primary bg-primary-container text-on-primary-container font-mono-label text-mono-label uppercase tracking-widest px-8 py-4 rounded-DEFAULT transition-all duration-300 cursor-pointer active:scale-95 inline-flex items-center gap-2" href="#projects">
+                VIEW PROJECTS
+                <span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 0;">arrow_forward</span>
+</a>
+</section>
+<!-- About Section (Dossier) -->
+<section class="scroll-mt-32" id="dossier">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+<div class="md:col-span-8 space-y-8 glass-panel p-8 rounded-lg">
+<h2 class="font-headline-md text-headline-md text-white border-b border-outline-variant/30 pb-4 inline-block">DOSSIER</h2>
+<div class="font-body-md text-body-md text-on-surface-variant space-y-6">
+<p>I view software engineering not just as problem-solving, but as architecture. Every function, every service is a load-bearing structure in a larger digital ecosystem. My philosophy centers on building systems that are robust, maintainable, and highly performant.</p>
+<p>Specializing in distributed systems and cloud-native architecture, I leverage modern toolchains to deliver solutions that scale gracefully under load while remaining comprehensible to future developers.</p>
+</div>
+</div>
+<div class="md:col-span-4 glass-panel p-6 rounded-lg border-glow-cyan h-full">
+<h3 class="font-mono-label text-mono-label text-primary-container uppercase tracking-widest mb-6 pb-2 border-b border-primary-container/30">SYSTEM SPECS</h3>
+<ul class="space-y-4 font-mono-code text-mono-code text-on-surface-variant">
+<li class="flex justify-between items-center">
+<span class="text-white">EXPERIENCE</span>
+<span>10+ YEARS</span>
+</li>
+<li class="flex justify-between items-center">
+<span class="text-white">FOCUS</span>
+<span>FULL-STACK</span>
+</li>
+<li class="flex justify-between items-center">
+<span class="text-white">DOMAIN</span>
+<span>DISTRIBUTED SYS</span>
+</li>
+</ul>
+</div>
+</div>
+</section>
+<!-- Stack Section (Control Panel) -->
+<section class="scroll-mt-32" id="stack">
+<h2 class="font-headline-md text-headline-md text-white border-b border-outline-variant/30 pb-4 mb-12 inline-block">TECH STACK</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Languages -->
+<div class="glass-panel p-6 rounded-lg">
+<h3 class="font-mono-label text-mono-label text-secondary uppercase tracking-widest mb-6">LANGUAGES</h3>
+<div class="flex flex-wrap gap-3">
+<span class="px-3 py-1 bg-surface-container border border-outline-variant/50 text-white font-mono-code text-mono-code rounded-DEFAULT">[ TYPESCRIPT ]</span>
+<span class="px-3 py-1 bg-surface-container border border-outline-variant/50 text-white font-mono-code text-mono-code rounded-DEFAULT">[ GO ]</span>
+<span class="px-3 py-1 bg-surface-container border border-outline-variant/50 text-white font-mono-code text-mono-code rounded-DEFAULT">[ RUST ]</span>
+</div>
+</div>
+<!-- Frameworks -->
+<div class="glass-panel p-6 rounded-lg">
+<h3 class="font-mono-label text-mono-label text-secondary uppercase tracking-widest mb-6">FRAMEWORKS</h3>
+<div class="flex flex-wrap gap-3">
+<span class="px-3 py-1 bg-surface-container border border-outline-variant/50 text-white font-mono-code text-mono-code rounded-DEFAULT">[ NEXT.JS ]</span>
+<span class="px-3 py-1 bg-surface-container border border-outline-variant/50 text-white font-mono-code text-mono-code rounded-DEFAULT">[ TAILWIND ]</span>
+<span class="px-3 py-1 bg-surface-container border border-outline-variant/50 text-white font-mono-code text-mono-code rounded-DEFAULT">[ REACT ]</span>
+</div>
+</div>
+<!-- Infrastructure -->
+<div class="glass-panel p-6 rounded-lg">
+<h3 class="font-mono-label text-mono-label text-secondary uppercase tracking-widest mb-6">INFRASTRUCTURE</h3>
+<div class="flex flex-wrap gap-3">
+<span class="px-3 py-1 bg-surface-container border border-outline-variant/50 text-white font-mono-code text-mono-code rounded-DEFAULT">[ AWS ]</span>
+<span class="px-3 py-1 bg-surface-container border border-outline-variant/50 text-white font-mono-code text-mono-code rounded-DEFAULT">[ DOCKER ]</span>
+<span class="px-3 py-1 bg-surface-container border border-outline-variant/50 text-white font-mono-code text-mono-code rounded-DEFAULT">[ KUBERNETES ]</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Projects Section -->
+<section class="scroll-mt-32" id="projects">
+<h2 class="font-headline-md text-headline-md text-white border-b border-outline-variant/30 pb-4 mb-12 inline-block">PROJECTS</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Project 1 -->
+<div class="glass-panel rounded-lg overflow-hidden group hover:border-primary-container/50 transition-colors duration-300">
+<div class="bg-cover bg-center w-full h-48 border-b border-outline-variant/30 grayscale group-hover:grayscale-0 transition-all duration-500" data-alt="A highly detailed conceptual rendering of a sophisticated neural engine core. Deep space aesthetic, dark mode background with intense, glowing cyan data streams pulsing through a complex geometric lattice. High contrast, technical, and engineered visual style." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB36PgGzjfvKz7gV2oSDp7HsXAK2j-sqIS8zMLVHPQmbyWPMpJnlRCm61YP0PFVigJycM8HdGQ-E2ARWFPbh5r-PTjHsgfXwJV61Z2WXtcxDW1uDblwkSOSUDnYyetjQrA-toCI8KWHjpByJLXTTVdxB49T5JwKSMn-u63liT420gwVS1Lm0mkDk_YbfcFR4sYZHwIViP2rEfGE5Jz5Cp_K8ta7Ux9-ytWXx9HSjwMh7MyYtYJjfJxD')"></div>
+<div class="p-6 space-y-4">
+<h3 class="font-headline-md text-headline-md text-white text-xl">Neural Engine</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">A high-performance machine learning inference pipeline built for real-time data processing at scale.</p>
+<div class="flex flex-wrap gap-2 pt-4">
+<span class="text-xs font-mono-code text-primary-container bg-primary-container/10 px-2 py-1 rounded-DEFAULT">RUST</span>
+<span class="text-xs font-mono-code text-primary-container bg-primary-container/10 px-2 py-1 rounded-DEFAULT">CUDA</span>
+</div>
+<div class="flex gap-4 pt-4 border-t border-outline-variant/20 mt-4">
+<a class="text-on-surface-variant hover:text-white transition-colors flex items-center gap-1 text-sm font-mono-label uppercase" href="#"><span class="material-symbols-outlined text-[16px]">open_in_new</span> Live</a>
+<a class="text-on-surface-variant hover:text-white transition-colors flex items-center gap-1 text-sm font-mono-label uppercase" href="#"><span class="material-symbols-outlined text-[16px]">code</span> Repo</a>
+</div>
+</div>
+</div>
+<!-- Project 2 -->
+<div class="glass-panel rounded-lg overflow-hidden group hover:border-primary-container/50 transition-colors duration-300">
+<div class="bg-cover bg-center w-full h-48 border-b border-outline-variant/30 grayscale group-hover:grayscale-0 transition-all duration-500" data-alt="Abstract visualization of a highly secure digital vault. Dark charcoal background with precise, thin cyan glowing lines forming impenetrable cryptographic barriers and padlocks. Refined glassmorphism, cold, technical, and highly engineered mood." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDIvkSBuzeX611YfF1gss2vcGF6UVtUd2IFB8RtW4zcjRjsEqZZDW_DhjW22wuReqLlMaHJEZRNk4A8I7Y-K0O5fyeksV5j_Dq7CPAEyCKB9mt7Bkw3IO22zE8IUsI6BaBT70DmWzqxxsizjIggiwNa4UHQwR9J8ef2y-5PU4qW4yBfcCvKZDZlH_PHNWtSm7v1P7LiQNlKJheb77GWJELew1YrTZ95_K0NtOuGa5n5RmR1-4kuyvRb')"></div>
+<div class="p-6 space-y-4">
+<h3 class="font-headline-md text-headline-md text-white text-xl">Vault-X</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Enterprise-grade secrets management service with zero-knowledge encryption and distributed consensus.</p>
+<div class="flex flex-wrap gap-2 pt-4">
+<span class="text-xs font-mono-code text-primary-container bg-primary-container/10 px-2 py-1 rounded-DEFAULT">GO</span>
+<span class="text-xs font-mono-code text-primary-container bg-primary-container/10 px-2 py-1 rounded-DEFAULT">GRPC</span>
+</div>
+<div class="flex gap-4 pt-4 border-t border-outline-variant/20 mt-4">
+<a class="text-on-surface-variant hover:text-white transition-colors flex items-center gap-1 text-sm font-mono-label uppercase" href="#"><span class="material-symbols-outlined text-[16px]">code</span> Repo</a>
+</div>
+</div>
+</div>
+<!-- Project 3 -->
+<div class="glass-panel rounded-lg overflow-hidden group hover:border-primary-container/50 transition-colors duration-300">
+<div class="bg-cover bg-center w-full h-48 border-b border-outline-variant/30 grayscale group-hover:grayscale-0 transition-all duration-500" data-alt="Technical visualization of omni-directional data streams. A deep, multi-layered dark digital space with vibrant cyan light-leaks mapping out a complex mesh network of fast-moving information packets. Clean, stark, and modern minimalist." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDaLNTxeOo_jLfLBK735bHKwBnG8V_MvOFzqHlfsCDYKVq5CYyst8eImrScgijmez0BF8kw6TL0YHRIXGV91UPnn-cFEsqoHYfRye590kqgyoaQp-asI9_S8Rt8p96-ZVd0mbF5d0oRx9MJnz5s1dwavafhbT453FUey3fV9Q1N9HKvpd0Bno4KrX42QiRmnLHEWff5VnUscO4jgQhVItov3EK5ciouFjfquBFfcTU6IVs4PLz7a0-S')"></div>
+<div class="p-6 space-y-4">
+<h3 class="font-headline-md text-headline-md text-white text-xl">Omni-Stream</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Fault-tolerant event streaming platform capable of handling millions of concurrent connections.</p>
+<div class="flex flex-wrap gap-2 pt-4">
+<span class="text-xs font-mono-code text-primary-container bg-primary-container/10 px-2 py-1 rounded-DEFAULT">TYPESCRIPT</span>
+<span class="text-xs font-mono-code text-primary-container bg-primary-container/10 px-2 py-1 rounded-DEFAULT">KAFKA</span>
+</div>
+<div class="flex gap-4 pt-4 border-t border-outline-variant/20 mt-4">
+<a class="text-on-surface-variant hover:text-white transition-colors flex items-center gap-1 text-sm font-mono-label uppercase" href="#"><span class="material-symbols-outlined text-[16px]">open_in_new</span> Live</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Contact Section -->
+<section class="scroll-mt-32 glass-panel p-12 rounded-xl text-center border-glow-cyan max-w-3xl mx-auto" id="contact">
+<h2 class="font-headline-md text-headline-md text-white mb-4">LET'S BUILD SOMETHING GREAT.</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-8 max-w-lg mx-auto">Systems online. Comm channels open. Reach out to discuss architecture, engineering, or potential collaborations.</p>
+<div class="flex justify-center gap-6">
+<a class="w-12 h-12 rounded-full border border-outline-variant/50 flex items-center justify-center text-on-surface-variant hover:text-primary-container hover:border-primary-container hover:shadow-[0_0_10px_rgba(0,240,255,0.3)] transition-all duration-300" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">code</span>
+</a>
+<a class="w-12 h-12 rounded-full border border-outline-variant/50 flex items-center justify-center text-on-surface-variant hover:text-primary-container hover:border-primary-container hover:shadow-[0_0_10px_rgba(0,240,255,0.3)] transition-all duration-300" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">work</span>
+</a>
+<a class="w-12 h-12 rounded-full border border-outline-variant/50 flex items-center justify-center text-on-surface-variant hover:text-primary-container hover:border-primary-container hover:shadow-[0_0_10px_rgba(0,240,255,0.3)] transition-all duration-300" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">mail</span>
+</a>
+<a class="w-12 h-12 rounded-full border border-outline-variant/50 flex items-center justify-center text-on-surface-variant hover:text-primary-container hover:border-primary-container hover:shadow-[0_0_10px_rgba(0,240,255,0.3)] transition-all duration-300" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">chat</span>
+</a>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest w-full mt-section-gap border-t border-outline-variant/20">
+<div class="flex flex-col md:flex-row justify-between items-center w-full px-margin-mobile md:px-gutter py-unit gap-4 max-w-container-max mx-auto h-24">
+<div class="font-mono-label text-mono-label text-on-surface-variant">
+                © 2024 SYSTEM_ARCHITECT // ALL RIGHTS RESERVED
+            </div>
+<div class="flex gap-6 font-mono-code text-mono-code uppercase text-on-surface-variant">
+<a class="hover:text-primary-container transition-colors duration-300" href="#">GitHub</a>
+<a class="hover:text-primary-container transition-colors duration-300" href="#">LinkedIn</a>
+<a class="hover:text-primary-container transition-colors duration-300" href="#">Documentation</a>
+</div>
+</div>
+</footer>
+</body></html>
