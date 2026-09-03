@@ -22,6 +22,12 @@
 // - Tech Stack renders a fixed three-entry category list built from
 //   site.techStack's three named keys (TECH-01), never a generic loop over
 //   arbitrary category names.
+// - Contact (code.html lines 379-396): copy comes from the two new
+//   contactHeading/contactSubtitle site.ts fields instead of the
+//   prototype's persona text; every icon-only anchor gains an aria-label
+//   (the prototype has none); rel="noopener noreferrer" is applied
+//   unconditionally, even though every href is still the inert placeholder
+//   "#" (D-13).
 import Base from "../layouts/Base.astro";
 import { site } from "../data/site.ts";
 import { Icon } from "astro-icon/components";
@@ -100,6 +106,23 @@ const techCategories: { label: string; items: readonly string[] }[] = [
             ))}
           </div>
         </div>
+      ))}
+    </div>
+  </section>
+
+  <section id="contact" class="scroll-mt-32 glass-panel p-12 rounded-xl text-center border-glow-cyan max-w-3xl mx-auto">
+    <h2 class="font-headline-md text-headline-md text-white mb-4">{site.contactHeading}</h2>
+    <p class="font-body-md text-body-md font-medium text-on-surface-variant mb-8 max-w-lg mx-auto">{site.contactSubtitle}</p>
+    <div class="flex justify-center gap-6">
+      {site.socials.map((s) => (
+        <a
+          href={s.href}
+          rel="noopener noreferrer"
+          aria-label={s.label}
+          class="w-12 h-12 rounded-full border border-outline-variant/50 flex items-center justify-center text-on-surface-variant hover:text-primary-container hover:border-primary-container hover:shadow-[0_0_10px_rgba(0,240,255,0.3)] transition-all duration-300"
+        >
+          <Icon name={s.icon} />
+        </a>
       ))}
     </div>
   </section>
