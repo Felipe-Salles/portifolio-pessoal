@@ -411,18 +411,24 @@ if (!/@keyframespulse\{/.test(cssStripped)) {
   addViolation("hero", "no @keyframes pulse block found in built CSS");
 }
 
-const ctaTagRegex = /<a\b[^>]*href="#projects"[^>]*>/i;
-const ctaTagMatch = ctaTagRegex.exec(html);
-if (!ctaTagMatch) {
-  heroOk = false;
-  addViolation("hero", 'no <a href="#projects"> anchor found');
-} else {
-  if (!ctaTagMatch[0].includes("btn-primary")) {
-    heroOk = false;
-    addViolation("hero", 'CTA anchor href="#projects" missing btn-primary class');
+// The nav bar (Phase 2) also links to #projects with plain text ("Projects"),
+// so every href="#projects" anchor must be inspected — the Hero CTA is
+// identified by carrying btn-primary, not merely by being the first match.
+const ctaTagRegexGlobal = /<a\b[^>]*href="#projects"[^>]*>/gi;
+let ctaCandidateMatch;
+let ctaBtnPrimaryMatch = null;
+while ((ctaCandidateMatch = ctaTagRegexGlobal.exec(html)) !== null) {
+  if (ctaCandidateMatch[0].includes("btn-primary")) {
+    ctaBtnPrimaryMatch = ctaCandidateMatch;
+    break;
   }
-  const ctaStart = ctaTagMatch.index;
-  const ctaOpenEndIdx = ctaStart + ctaTagMatch[0].length;
+}
+if (!ctaBtnPrimaryMatch) {
+  heroOk = false;
+  addViolation("hero", 'no <a href="#projects"> anchor with class btn-primary found');
+} else {
+  const ctaStart = ctaBtnPrimaryMatch.index;
+  const ctaOpenEndIdx = ctaStart + ctaBtnPrimaryMatch[0].length;
   const ctaCloseIdx = html.indexOf("</a>", ctaOpenEndIdx);
   if (ctaCloseIdx === -1) {
     heroOk = false;

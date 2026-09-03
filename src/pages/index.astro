@@ -1,47 +1,74 @@
 ---
-// Scaffolding — pipeline proof + token gallery only. Replaced by the real
-// page shell in Phase 2 (nav/layout) and Phase 3 (content sections).
+// Source: Arquivos de design/code.html lines 248-292 (Hero 248-263, Dossier
+// 265-292). Replaces Phase 1's pipeline-proof scaffolding — Phase 3's real
+// content sections begin here.
 //
-// The gallery below is not a design comp — it exists purely so Tailwind v4
-// emits utility class *rules* (not just @theme custom properties) for a
-// representative class per token family, so the build-output assertions in
-// 01-02-PLAN.md Task 1/2 have something real to check against.
+// Mandatory deviations from the prototype:
+// - CTA copy is PT-BR ("VER PROJETOS"), never the prototype's literal
+//   "VIEW PROJECTS" (CLAUDE.md's PT-BR constraint applies to new copy).
+// - Every rendered string comes from src/data/site.ts, never a hardcoded
+//   persona literal.
+// - The prototype's radius-suffix class (not a real Tailwind class name)
+//   corrected to bare `rounded` throughout.
+// - The prototype's smaller monospace token is consolidated up to the
+//   mono-label token throughout (typography size-budget consolidation).
+// - Hero paragraph/Dossier bio use the body-md token (not the prototype's
+//   larger one) plus a font-medium weight override (typography
+//   consolidation).
+// - Hero H1 uses a semibold weight override (not the prototype's bold)
+//   per the heading-group weight consolidation.
+// - The visitor-name field is deliberately never rendered anywhere on this
+//   page (D-03) — it stays reserved for future meta tags.
 import Base from "../layouts/Base.astro";
+import { site } from "../data/site.ts";
 import { Icon } from "astro-icon/components";
 ---
 
-<Base title="PIPELINE OK — Portfólio Dev">
-  <div>
-    <h1>PIPELINE OK</h1>
-
-    <!-- Icon self-hosting proof: all 7 required Material Symbols glyphs,
-         base names only — none of them has a "-outline" variant needed here
-         (RESEARCH.md Pattern 4 / Assumptions Log A1). -->
-    <p>
-      <Icon name="material-symbols:menu" />
-      <Icon name="material-symbols:arrow-forward" />
-      <Icon name="material-symbols:open-in-new" />
-      <Icon name="material-symbols:code" />
-      <Icon name="material-symbols:work" />
-      <Icon name="material-symbols:mail" />
-      <Icon name="material-symbols:chat" />
-    </p>
-
-    <!-- Font self-hosting proof: forces the built CSS to include @font-face
-         rules for all three self-hosted families. -->
-    <p style="font-family: Lexend, sans-serif;">Lexend sample text</p>
-    <p style="font-family: Inter, sans-serif;">Inter sample text</p>
-    <p style="font-family: 'JetBrains Mono', monospace;">JetBrains Mono sample text</p>
-
-    <!-- Token gallery — one representative utility per @theme token family. -->
-    <div class="bg-surface-container border border-outline-variant px-margin-mobile gap-gutter max-w-container-max rounded">
-      <span class="text-on-surface-variant">on-surface-variant sample</span>
-      <p class="text-display-lg">Display LG</p>
-      <p class="text-headline-md">Headline MD</p>
-      <p class="text-body-md">Body MD</p>
-      <p class="text-mono-label font-mono-label">MONO LABEL</p>
-      <div class="rounded-lg">rounded-lg box</div>
-      <div class="rounded-full">rounded-full box</div>
+<Base title="Portfólio Dev — Felipe Salles">
+  <section class="min-h-[716px] flex flex-col justify-center items-start">
+    <div class="inline-flex items-center gap-2 px-3 py-1 mb-8 border border-outline-variant/50 bg-surface-container/50 rounded font-mono-label text-mono-label text-primary-container">
+      <span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span>
+      &gt;_ {site.availabilityStatus}
     </div>
-  </div>
+    <h1 class="font-display-lg-mobile text-display-lg-mobile md:font-display-lg md:text-display-lg font-semibold tracking-tight text-white mb-4 uppercase">
+      {site.heroHeading}
+    </h1>
+    <p class="font-mono-label text-mono-label text-primary-container uppercase tracking-widest mb-6">
+      {site.title}
+    </p>
+    <p class="font-body-md text-body-md font-medium text-on-surface-variant max-w-2xl mb-12">
+      {site.heroSubtitle}
+    </p>
+    <a
+      href="#projects"
+      class="btn-primary bg-primary-container text-on-primary-container font-mono-label text-mono-label uppercase tracking-widest px-8 py-4 rounded transition-all duration-300 cursor-pointer active:scale-95 inline-flex items-center gap-2"
+    >
+      VER PROJETOS
+      <Icon name="material-symbols:arrow-forward" class="text-xl" />
+    </a>
+  </section>
+
+  <section class="scroll-mt-32" id="dossier">
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+      <div class="md:col-span-8 space-y-8 glass-panel p-8 rounded-lg">
+        <h2 class="font-headline-md text-headline-md text-white border-b border-outline-variant/30 pb-4 inline-block">DOSSIER</h2>
+        <div class="font-body-md text-body-md font-medium text-on-surface-variant space-y-6">
+          {site.bio.map((paragraph) => (
+            <p>{paragraph}</p>
+          ))}
+        </div>
+      </div>
+      <div class="md:col-span-4 glass-panel p-6 rounded-lg border-glow-cyan h-full">
+        <h3 class="font-mono-label text-mono-label text-primary-container uppercase tracking-widest mb-6 pb-2 border-b border-primary-container/30">SYSTEM SPECS</h3>
+        <ul class="space-y-4 font-mono-label text-mono-label text-on-surface-variant">
+          {site.systemSpecs.map((spec) => (
+            <li class="flex justify-between items-center">
+              <span class="text-white">{spec.label}</span>
+              <span>{spec.value}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
 </Base>
