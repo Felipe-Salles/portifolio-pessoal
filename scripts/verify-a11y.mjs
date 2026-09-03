@@ -57,15 +57,37 @@
 //     A11Y SUMMARY routes=<n> violations=<n> incomplete_total=<n> incomplete_resolved=<n> contrast_checked=<n> exit=<0|1>
 // - Exits 0 only when violations=0.
 //
-// Task 2 extends this file with a supplementary pixel-sampling contrast
-// check (sharp + wcag-contrast) that resolves every deferred glass-panel
-// entry parked here by measuring the actually-painted pixel, and wires
-// `verify:a11y` into package.json's composite verify chain.
+// Contract (see 04-04-PLAN.md Task 2, added on top of Task 1 above):
+// - Every entry deferred above is resolved here by measurement, never by
+//   token-value assumption: obtain the element's boundingBox(), screenshot
+//   the page clipped to that box, sample a real painted pixel a few px
+//   inset from the box's top-left corner (background, not glyph stroke —
+//   RESEARCH.md Pattern 4) via `sharp`, read the element's own computed
+//   text color via `getComputedStyle`, and compute the ratio with
+//   `wcag-contrast`'s `hex()`.
+// - The WCAG AA threshold is size-dependent, not a single constant: 3.0 for
+//   large text (computed font-size >= 24px, or >= 18.66px at font-weight
+//   >= 700), 4.5 otherwise — both read from the element's own computed
+//   style, never inferred from class names.
+// - Any deferred entry that cannot be measured (no bounding box, zero-area
+//   clip, unreadable computed color, or a sampling failure) is a violation,
+//   never a silent skip.
+// - After every route is scanned, incomplete_resolved must equal the total
+//   number of deferred entries — asserted explicitly so an entry can never
+//   fall through unaccounted.
+// - Never patches a design token to silence a real contrast failure — a
+//   genuine violation here is reported with its measured numbers only
+//   (04-UI-SPEC.md's A11Y-04 section escalates token changes to
+//   CONTEXT.md/UI-SPEC, not something this gate patches around).
+// - Adds `verify:a11y` to package.json's scripts block and appends it to
+//   the composite `verify` chain (the seventh gate).
 
 import { existsSync } from "node:fs";
 import { chromium } from "playwright";
 import { preview } from "astro";
 import AxeBuilder from "@axe-core/playwright";
+import sharp from "sharp";
+import { hex as wcagHex } from "wcag-contrast";
 
 const PORT = 4326;
 const ROUTES = ["/", "/404.html"];
@@ -87,15 +109,39 @@ function addViolation(check, detail) {
 }
 
 let incompleteTotal = 0;
-// Resolved by the Task 2 supplementary contrast check (not yet added).
+// Incremented only when a deferred entry's measured ratio clears the
+// applicable AA threshold (the literal "resolved" outcome per the summary
+// line contract). A failing measurement is still fully accounted for via
+// processedDeferred + its own "contrast" violation — see the coverage
+// assertion after the route loop.
 let incompleteResolved = 0;
 let contrastChecked = 0;
+// Counts every deferred entry that reached a terminal outcome (measured +
+// passed, or explicitly failed as unmeasurable/violation) — used only for
+// the fall-through coverage assertion below, distinct from
+// incompleteResolved.
+let processedDeferred = 0;
 
 // Deferred color-contrast `incomplete` results — parked here rather than
 // resolved; Task 2's supplementary pixel-sampling check consumes and
 // resolves every entry (see the file-header Deviation note for why every
 // color-contrast incomplete entry is deferred, not just glass-panel ones).
 const deferredContrastEntries = [];
+
+/**
+ * Convert a Playwright-evaluated CSS color string (e.g. "rgb(1, 2, 3)" or
+ * "rgba(1, 2, 3, 0.5)") to a "#rrggbb" hex string.
+ */
+function cssColorToHex(cssColor) {
+  const m = /rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)/i.exec(cssColor);
+  if (!m) return null;
+  const [, r, g, b] = m;
+  const toHex = (n) =>
+    Math.max(0, Math.min(255, Math.round(Number(n))))
+      .toString(16)
+      .padStart(2, "0");
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+}
 
 let server;
 let browser;
@@ -198,12 +244,119 @@ try {
       addViolation("a11y-surface", `${route}: ${issue}`);
     }
 
+    // -----------------------------------------------------------------
+    // Supplementary pixel-sampling contrast check (Task 2, A11Y-04) —
+    // resolves every entry deferred above for this route, while the page
+    // is still open (avoids a second navigation/render pass).
+    // -----------------------------------------------------------------
+    const routeDeferred = deferredContrastEntries.filter((e) => e.route === route);
+    for (const entry of routeDeferred) {
+      const locator = page.locator(entry.selector).first();
+      const box = await locator.boundingBox().catch(() => null);
+      if (!box || box.width <= 0 || box.height <= 0) {
+        processedDeferred++;
+        addViolation(
+          "contrast",
+          `${route} ${entry.selector} — could not measure (no usable bounding box), cannot verify contrast`,
+        );
+        continue;
+      }
+
+      const computed = await locator
+        .evaluate((el) => {
+          const cs = getComputedStyle(el);
+          return {
+            color: cs.color,
+            fontSize: parseFloat(cs.fontSize),
+            fontWeight: parseInt(cs.fontWeight, 10) || 400,
+          };
+        })
+        .catch(() => null);
+
+      if (!computed || !computed.color) {
+        processedDeferred++;
+        addViolation(
+          "contrast",
+          `${route} ${entry.selector} — could not read computed color, cannot verify contrast`,
+        );
+        continue;
+      }
+
+      const fgHex = cssColorToHex(computed.color);
+      if (!fgHex) {
+        processedDeferred++;
+        addViolation(
+          "contrast",
+          `${route} ${entry.selector} — unreadable computed color "${computed.color}"`,
+        );
+        continue;
+      }
+
+      // Sample a pixel a few px inset from the box's top-left corner —
+      // background, not glyph stroke (RESEARCH.md Pattern 4). Text is
+      // centered/baseline-aligned, so the corner is background.
+      const insetX = Math.min(2, Math.max(0, Math.floor(box.width / 2) - 1));
+      const insetY = Math.min(2, Math.max(0, Math.floor(box.height / 2) - 1));
+      let bgHex;
+      try {
+        // locator.screenshot() (not page.screenshot({clip})) — auto-scrolls
+        // the element into view first, so elements below the fold (this
+        // page is far taller than the 900px viewport) are captured
+        // correctly instead of producing an out-of-viewport empty clip.
+        const screenshotBuffer = await locator.screenshot();
+        const { data } = await sharp(screenshotBuffer)
+          .extract({ left: insetX, top: insetY, width: 1, height: 1 })
+          .raw()
+          .toBuffer({ resolveWithObject: true });
+        bgHex = `#${[...data.subarray(0, 3)]
+          .map((c) => c.toString(16).padStart(2, "0"))
+          .join("")}`;
+      } catch (err) {
+        processedDeferred++;
+        addViolation(
+          "contrast",
+          `${route} ${entry.selector} — could not sample painted pixel (${err.message})`,
+        );
+        continue;
+      }
+
+      const ratio = wcagHex(bgHex, fgHex);
+      // AA threshold is size-dependent, read from computed style — never
+      // inferred from class names (Task 2 requirement).
+      const isLarge =
+        computed.fontSize >= 24 ||
+        (computed.fontSize >= 18.66 && computed.fontWeight >= 700);
+      const required = isLarge ? 3 : 4.5;
+
+      processedDeferred++;
+      if (ratio < required) {
+        // Never patch a design token to silence this — report the measured
+        // numbers only (04-UI-SPEC.md A11Y-04, T-04-04-04).
+        addViolation(
+          "contrast",
+          `${route} ${entry.selector} ratio=${ratio.toFixed(2)} required=${required} fg=${fgHex} bg=${bgHex}`,
+        );
+      } else {
+        incompleteResolved++;
+        contrastChecked++;
+      }
+    }
+
     await context.close();
   }
 
-  // Task 2 will resolve every entry in deferredContrastEntries here via the
-  // supplementary pixel-sampling contrast check, incrementing
-  // incompleteResolved/contrastChecked and asserting the two counts match.
+  // Coverage assertion: every deferred entry must have been either resolved
+  // (measured, cleared AA) or reported as a specific "contrast" violation
+  // above — processedDeferred counts both paths, so this only fires on a
+  // true silent-drop bug (an entry that was neither measured nor reported),
+  // not on a genuine contrast failure (which already has its own violation
+  // and correctly keeps the gate red).
+  if (processedDeferred !== deferredContrastEntries.length) {
+    addViolation(
+      "contrast",
+      `processed ${processedDeferred} deferred entries but ${deferredContrastEntries.length} were parked — an entry fell through unaccounted`,
+    );
+  }
 } finally {
   if (browser) {
     await browser.close();
