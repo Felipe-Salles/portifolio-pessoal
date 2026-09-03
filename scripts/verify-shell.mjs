@@ -88,12 +88,21 @@ function attrEq(attr, value) {
   return `\\[${attr}=(?:"${value}"|${value})\\]`;
 }
 
-/** Find `<selectorRegexStr>{<declarations>}` in `source` and return the
- * declaration block's captured text, or null if no match. */
+/** Find the declaration block for `selectorRegexStr` in `source` and return
+ * its captured text, or null if no match. Tolerates minifiers (e.g.
+ * Lightning CSS) grouping multiple identical-declaration selectors into a
+ * comma-separated selector list — the selector may be followed directly by
+ * `{` or by `,` (as part of a larger selector list) before the block that
+ * eventually opens with `{`. */
 function findCssBlock(source, selectorRegexStr) {
-  const re = new RegExp(`${selectorRegexStr}\\{([^}]*)\\}`);
+  const re = new RegExp(`${selectorRegexStr}\\s*[,{]`);
   const m = re.exec(source);
-  return m ? m[1] : null;
+  if (!m) return null;
+  const braceIdx = source.indexOf("{", m.index);
+  if (braceIdx === -1) return null;
+  const closeIdx = source.indexOf("}", braceIdx);
+  if (closeIdx === -1) return null;
+  return source.slice(braceIdx + 1, closeIdx);
 }
 
 /** Balance-match an HTML element's inner content starting just after its

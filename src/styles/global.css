@@ -273,6 +273,50 @@ body {
   transform: translateY(-200%);
 }
 
+/* Mobile overlay state rules (D-01) — 02-UI-SPEC.md "Mobile full-screen
+   overlay". Four attribute-driven rules, all keyed off data-menu-open so a
+   single vanilla-JS `setOpen()` writer is the only place state changes;
+   nothing here is arbitrary, each is documented below.
+
+   1. Hides the closed overlay and removes its links from the tab order.
+      The `hidden` HTML attribute cannot be used instead: the overlay also
+      carries Tailwind's `flex` utility, and an author-level `.flex {
+      display: flex }` rule outranks the user-agent `[hidden] { display:
+      none }` rule — the overlay would render permanently open. */
+[data-nav-overlay][data-menu-open="false"] {
+  display: none;
+}
+
+/* 2. Raises the nav above the overlay while open. The overlay sits at
+      z-[60], above the nav's resting z-50, but the toggle button — the
+      overlay's only close control — lives inside the nav, so the nav must
+      rise above the overlay or its close button becomes unclickable.
+      Nesting the overlay inside the nav instead is not an option: the
+      nav's backdrop-filter makes it a containing block for position:fixed
+      descendants and would clip the overlay to the nav bar's own box. */
+nav[data-menu-open="true"] {
+  z-index: 70;
+}
+
+/* 3. Scroll lock for the full-viewport takeover. Removing the attribute on
+      close (rather than writing/un-writing an inline style) restores this
+      file's own earlier `body { overflow-x: hidden }` declaration exactly,
+      with nothing left to clobber or forget to undo. */
+body[data-menu-open="true"] {
+  overflow: hidden;
+}
+
+/* 4. Icon swap, as two descendant-combinator rules. Both icons are
+      server-rendered inline SVGs (astro-icon, build-time), so the swap is
+      pure CSS — no icon markup is ever constructed at runtime, keeping
+      SEC-01 satisfied by construction. */
+nav[data-menu-open="false"] [data-nav-icon="close"] {
+  display: none;
+}
+nav[data-menu-open="true"] [data-nav-icon="menu"] {
+  display: none;
+}
+
 /* Custom scrollbar (code.html lines 65-68) — all three colors are exact
    solid-token matches, so they reference @theme custom properties. */
 ::-webkit-scrollbar {
