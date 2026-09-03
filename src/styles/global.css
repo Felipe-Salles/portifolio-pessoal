@@ -244,6 +244,22 @@ body {
   background-color: var(--color-primary-fixed);
 }
 
+/* Project card gradient-fallback hover — 03-UI-SPEC.md "Projects grid"
+   subsection (D-09). Both rules key off the card's Tailwind `group` marker
+   class on the parent <article>, the same trigger the real-photo
+   grayscale-to-colour reveal (`group-hover:grayscale-0`) uses — so the
+   fallback and a real cover photo share one hover interaction on the card.
+   The grayscale-to-colour photo reveal itself is deliberately reserved for
+   real coverImage photos (D-09); this primitive only ever gets a subtle
+   reaction (cyan wash + icon lift), never the full effect swap. */
+.group:hover .cover-fallback {
+  background-color: rgba(0, 240, 255, 0.03);
+}
+.group:hover .cover-fallback-icon {
+  opacity: 1;
+  transform: scale(1.08);
+}
+
 /* Global focus-visible glow — 02-UI-SPEC.md "Focus-visible glow (A11Y-01)".
    Bare :focus-visible (not scoped to a class) so every future phase inherits
    it automatically. box-shadow value is deliberately identical to

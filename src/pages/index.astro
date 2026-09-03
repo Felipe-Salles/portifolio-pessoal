@@ -1,7 +1,8 @@
 ---
 // Source: Arquivos de design/code.html lines 248-292 (Hero 248-263, Dossier
-// 265-292) and lines 294-325 (Tech Stack). Replaces Phase 1's
-// pipeline-proof scaffolding — Phase 3's real content sections begin here.
+// 265-292), lines 294-325 (Tech Stack) and lines 327-377 (Projects).
+// Replaces Phase 1's pipeline-proof scaffolding — Phase 3's real content
+// sections begin here.
 //
 // Mandatory deviations from the prototype:
 // - CTA copy is PT-BR ("VER PROJETOS"), never the prototype's literal
@@ -28,9 +29,18 @@
 //   (the prototype has none); rel="noopener noreferrer" is applied
 //   unconditionally, even though every href is still the inert placeholder
 //   "#" (D-13).
+// - Projects (code.html lines 327-377): cover art renders via astro:assets'
+//   Image component (emits a real <img>) instead of the prototype's inline
+//   style-attribute cover div; the gradient fallback uses the v4 linear-
+//   direction utility, never the prototype's v3-era gradient utility;
+//   radius stays bare `rounded`; tag pills use the mono-label typography
+//   token, not the smaller mono token; the card description adds a
+//   font-medium weight override per the typography weight consolidation.
 import Base from "../layouts/Base.astro";
 import { site } from "../data/site.ts";
 import { Icon } from "astro-icon/components";
+import { getCollection } from "astro:content";
+import { Image } from "astro:assets";
 
 // Fixed three-category list (TECH-01) — enumerated explicitly rather than
 // derived from a generic iteration over the techStack object's own keys,
@@ -44,6 +54,22 @@ const techCategories: { label: string; items: readonly string[] }[] = [
   { label: "FRAMEWORKS", items: site.techStack.frameworks },
   { label: "INFRASTRUCTURE", items: site.techStack.infrastructure },
 ];
+
+// Projects grid (PROJ-01, D-05 through D-07). Two .filter() calls plus a
+// concat, not one clever comparator — makes the "featured group first, each
+// group independently order-sorted" contract explicit rather than encoding
+// it in comparator logic that's easy to get subtly wrong. The missing-order
+// fallback is Number.MAX_SAFE_INTEGER: an unbounded-value fallback would
+// make two entries that both omit `order` cancel out to a NaN difference,
+// and a comparator returning NaN is undefined behaviour.
+const allProjects = await getCollection("projects");
+
+const byOrder = (a: (typeof allProjects)[number], b: (typeof allProjects)[number]) =>
+  (a.data.order ?? Number.MAX_SAFE_INTEGER) - (b.data.order ?? Number.MAX_SAFE_INTEGER);
+
+const featuredProjects = allProjects.filter((p) => p.data.featured).sort(byOrder);
+const restProjects = allProjects.filter((p) => !p.data.featured).sort(byOrder);
+const projects = [...featuredProjects, ...restProjects];
 ---
 
 <Base title="Portfólio Dev — Felipe Salles">
@@ -106,6 +132,53 @@ const techCategories: { label: string; items: readonly string[] }[] = [
             ))}
           </div>
         </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="scroll-mt-32" id="projects">
+    <h2 class="font-headline-md text-headline-md text-white border-b border-outline-variant/30 pb-4 mb-12 inline-block">PROJECTS</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      {projects.map((project) => (
+        <article
+          class:list={[
+            "glass-panel rounded-lg overflow-hidden group transition-colors duration-300",
+            project.data.featured ? "md:col-span-2 border-glow-cyan" : "hover:border-primary-container/50",
+          ]}
+        >
+          {project.data.coverImage ? (
+            <Image
+              src={project.data.coverImage}
+              alt={`Capa do projeto ${project.data.title}`}
+              class="w-full h-48 object-cover border-b border-outline-variant/30 grayscale group-hover:grayscale-0 transition-all duration-500"
+            />
+          ) : (
+            <div class="cover-fallback w-full h-48 border-b border-outline-variant/30 flex items-center justify-center bg-linear-to-br from-primary-container/15 via-surface-container to-surface-container-high transition-all duration-500">
+              <Icon name="material-symbols:code" class="cover-fallback-icon w-12 h-12 text-primary-container/60 transition-all duration-500" />
+            </div>
+          )}
+          <div class="p-6 space-y-4">
+            <h3 class="font-headline-md text-headline-md text-white text-xl">{project.data.title}</h3>
+            <p class="font-body-md text-body-md font-medium text-on-surface-variant text-sm">{project.data.description}</p>
+            <div class="flex flex-wrap gap-2 pt-4">
+              {project.data.tags.map((tag) => (
+                <span class="text-xs font-mono-label text-primary-container bg-primary-container/10 px-2 py-1 rounded">{tag.toUpperCase()}</span>
+              ))}
+            </div>
+            <div class="flex gap-4 pt-4 border-t border-outline-variant/20 mt-4">
+              {project.data.liveUrl && (
+                <a href={project.data.liveUrl} rel="noopener noreferrer" class="text-on-surface-variant hover:text-white transition-colors flex items-center gap-1 text-sm font-mono-label uppercase">
+                  <Icon name="material-symbols:open-in-new" class="text-[16px]" /> Live
+                </a>
+              )}
+              {project.data.repoUrl && (
+                <a href={project.data.repoUrl} rel="noopener noreferrer" class="text-on-surface-variant hover:text-white transition-colors flex items-center gap-1 text-sm font-mono-label uppercase">
+                  <Icon name="material-symbols:code" class="text-[16px]" /> Repo
+                </a>
+              )}
+            </div>
+          </div>
+        </article>
       ))}
     </div>
   </section>
