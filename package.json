@@ -23,6 +23,7 @@
     "verify:deploy": "node scripts/verify-deploy-headers.mjs",
     "verify:csp-hash": "node scripts/verify-csp-hash.mjs",
     "verify:secrets": "node scripts/verify-no-client-secrets.mjs",
+    "audit:ci": "npm audit --audit-level=high",
     "verify": "npm run build && npm run verify:sec01 && npm run verify:tokens && npm run verify:shell && npm run verify:sections && npm run verify:schema && npm run verify:seo && npm run verify:a11y && npm run verify:csp-hash && npm run verify:secrets"
   },
   "dependencies": {
@@ -45,5 +46,8 @@
     "sharp": "^0.35.4",
     "typescript": "^6.0.3",
     "wcag-contrast": "^3.0.0"
+  },
+  "overrides": {
+    "path-to-regexp": "6.3.0"
   }
 }
