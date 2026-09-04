@@ -37,5 +37,27 @@ export default defineConfig({
   ],
   vite: {
     plugins: [tailwindcss()],
+    // Rule 1 fix (05-04): Vite's default 4096-byte assetsInlineLimit was
+    // base64-inlining small @fontsource woff/woff2 subset files directly
+    // into the compiled CSS as `data:font/...` URIs. Those data URIs
+    // violate this project's `font-src 'self'` CSP directive (no `data:`
+    // grant) — confirmed live by scripts/verify-live-csp.mjs against the
+    // real production URL. A flat `assetsInlineLimit: 0` was tried first
+    // but also externalized Nav.astro's previously-inlined mobile-menu
+    // script (the same Vite size-threshold heuristic decides both), which
+    // would have broken Phase 5's script-src hash-pinning approach. This
+    // predicate form instead forces only font files to stay real
+    // same-origin files, consistent with SEC-01's self-hosted-only
+    // discipline, and defers to Vite's default heuristic (byte-size vs.
+    // 4096) for every other asset — including Nav.astro's script chunk,
+    // which keeps inlining exactly as before.
+    build: {
+      assetsInlineLimit: (filePath) => {
+        if (/\.(woff2?|ttf|otf|eot)$/i.test(filePath)) {
+          return false;
+        }
+        return undefined;
+      },
+    },
   },
 });
