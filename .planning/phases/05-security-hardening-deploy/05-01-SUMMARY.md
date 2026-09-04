@@ -114,3 +114,15 @@ None - no external service configuration required. (D-02's GitHub/Vercel project
 ---
 *Phase: 05-security-hardening-deploy*
 *Completed: 2026-09-04*
+
+## Self-Check: PASSED
+
+- FOUND: vercel.json
+- FOUND: scripts/verify-csp-hash.mjs
+- FOUND: scripts/verify-deploy-headers.mjs
+- FOUND: astro.config.mjs (adapter edits)
+- FOUND: .planning/phases/05-security-hardening-deploy/05-01-SUMMARY.md
+- FOUND commit 4f9adc0 (Task 1)
+- FOUND commit f80d84b (Task 2)
+- FOUND commit c1458c4 (Task 3)
+- FOUND commit 9fa5fee (SUMMARY.md)
