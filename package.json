@@ -20,6 +20,7 @@
     "verify:schema": "node scripts/verify-content-schema.mjs",
     "verify:seo": "node scripts/verify-seo.mjs",
     "verify:a11y": "node scripts/verify-a11y.mjs",
+    "verify:deploy": "node scripts/verify-deploy-headers.mjs",
     "verify": "npm run build && npm run verify:sec01 && npm run verify:tokens && npm run verify:shell && npm run verify:sections && npm run verify:schema && npm run verify:seo && npm run verify:a11y"
   },
   "dependencies": {
