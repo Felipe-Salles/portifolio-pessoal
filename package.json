@@ -24,6 +24,7 @@
     "verify:csp-hash": "node scripts/verify-csp-hash.mjs",
     "verify:secrets": "node scripts/verify-no-client-secrets.mjs",
     "audit:ci": "npm audit --audit-level=high",
+    "verify:live-csp": "node scripts/verify-live-csp.mjs",
     "verify": "npm run build && npm run verify:sec01 && npm run verify:tokens && npm run verify:shell && npm run verify:sections && npm run verify:schema && npm run verify:seo && npm run verify:a11y && npm run verify:csp-hash && npm run verify:secrets"
   },
   "dependencies": {
