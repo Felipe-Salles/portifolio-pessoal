@@ -80,7 +80,7 @@ None yet.
 
 ### Blockers/Concerns
 
-- [Phase 05-03, Task 2] Blocked on a human action: the Vercel GitHub App has no repository-access grant to the newly created `portifolio-pessoal` GitHub repo, so pushes to `main` do not trigger a production deployment (0 check-runs, 0 webhooks after two test pushes). Fix: visit https://github.com/settings/installations, open the "Vercel" app's Configure page, and either switch Repository access to "All repositories" or add `portifolio-pessoal` to the selected-repositories list. Then push to `main` (or re-run `vercel git connect`) to trigger the first deploy.
+None currently open. (Resolved: Phase 05-03 Task 2's Vercel GitHub App repository-access gate — user granted "All repositories" access; a fresh push landed two Ready production deployments and `npm run verify:deploy` went GREEN. See 05-03-SUMMARY.md.)
 
 ## Deferred Items
 
