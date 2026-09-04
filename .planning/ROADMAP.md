@@ -94,7 +94,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   1. The production URL responds with CSP (`default-src 'self'` or equivalent), HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, and Permissions-Policy headers, verified via `curl -I`/securityheaders.com against the live URL (not local dev/preview)
   2. `npm audit` reports no known vulnerabilities and no secrets/API keys exist in client-shipped code before deploy
   3. Site is published on Vercel and reachable via HTTPS at the production URL
-**Plans**: TBD
+**Plans**: 4 plans (4 waves)
+- [ ] 05-01-PLAN.md — The failing live-header gate, the `@astrojs/vercel` adapter, the six-header `vercel.json`, and the build-time CSP-hash drift gate
+- [ ] 05-02-PLAN.md — SEC-04 pre-deploy hygiene: the client-secret gate over git index/`src/`/`dist/` plus the `npm audit --audit-level=high` gate
+- [ ] 05-03-PLAN.md — Go live: GitHub repo, Vercel Git integration, first production deploy, real-domain `site:` swap, and the live header gate turning green
+- [ ] 05-04-PLAN.md — Real-browser CSP/inline-script gate against production plus blocking human sign-off with an independent securityheaders.com scan
 
 ## Progress
 
@@ -107,5 +111,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 2. Layout & Navigation Shell | 3/3 | Complete   | 2026-09-03 |
 | 3. Content Sections | 3/3 | Complete   | 2026-09-03 |
 | 4. SEO, Accessibility & Polish | 5/5 | Complete   | 2026-09-03 |
-| 5. Security Hardening & Deploy | 0/TBD | Not started | - |
-</content>
+| 5. Security Hardening & Deploy | 0/4 | Planned | - |
