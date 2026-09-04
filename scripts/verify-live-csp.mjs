@@ -28,7 +28,16 @@
 //   messages only) and `pageerror` events — a CSP block on a module script
 //   can surface as a console error phrased "Refused to execute…" without
 //   always producing a `securitypolicyviolation` event, so both channels
-//   are checked.
+//   are checked. The generic, unattributed Chromium diagnostic
+//   `Failed to load resource: the server responded with a status of NNN ()`
+//   is filtered out of the console-error channel entirely — it duplicates
+//   the top-level navigation's own status code (a deliberately-probed 404
+//   page is EXPECTED to produce this, per DEPLOY-02/verify-deploy-headers.mjs
+//   already asserting that exact status), and gives no URL to attribute a
+//   real failure to. A `response` listener below independently and more
+//   precisely catches any *actual* broken subresource (non-document
+//   request, status >= 400) with its real URL and status attached, which
+//   is strictly better coverage than parsing the generic message text.
 // - Accumulates every finding into a `violations` array — never exits on
 //   the first failure.
 // - On the root page (PROD_URL) only: asserts an element matching
@@ -124,13 +133,25 @@ try {
     });
 
     const consoleErrors = [];
+    // Generic, unattributed navigation-status diagnostic — see file-header
+    // comment. Only ever matches this exact Chromium-generated string, so
+    // it never masks a real "Refused to ..." CSP message or an application
+    // console.error() call.
+    const GENERIC_RESOURCE_STATUS_RE = /^Failed to load resource: the server responded with a status of \d+ \(\)$/;
     page.on("console", (msg) => {
-      if (msg.type() === "error") {
+      if (msg.type() === "error" && !GENERIC_RESOURCE_STATUS_RE.test(msg.text())) {
         consoleErrors.push(msg.text());
       }
     });
     page.on("pageerror", (err) => {
       consoleErrors.push(err.message);
+    });
+
+    const subresourceFailures = [];
+    page.on("response", (res) => {
+      if (res.request().resourceType() !== "document" && res.status() >= 400) {
+        subresourceFailures.push({ url: res.url(), status: res.status() });
+      }
     });
 
     try {
@@ -154,6 +175,10 @@ try {
       consoleErrorCount++;
       const truncated = String(errText).split("\n")[0].slice(0, 200);
       addViolation("console-error", `${pageUrl}: ${truncated}`);
+    }
+
+    for (const f of subresourceFailures) {
+      addViolation("broken-subresource", `${pageUrl}: ${f.url} responded with status ${f.status}`);
     }
 
     if (isRootPage) {
