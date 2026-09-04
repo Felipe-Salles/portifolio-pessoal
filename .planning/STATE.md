@@ -4,14 +4,14 @@ milestone: v1.0
 milestone_name: milestone
 status: executing
 stopped_at: Phase 5 context gathered
-last_updated: "2026-09-04T15:45:52.556Z"
-last_activity: 2026-09-04 -- Phase 05 execution started
+last_updated: "2026-09-04T18:21:15.253Z"
+last_activity: 2026-09-04
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 18
-  completed_plans: 14
-  percent: 78
+  completed_plans: 17
+  percent: 80
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-09-02)
 ## Current Position
 
 Phase: 05 (security-hardening-deploy) — EXECUTING
-Plan: 1 of 4
-Status: Executing Phase 05
-Last activity: 2026-09-04 -- Phase 05 execution started
+Plan: 3 of 4 complete (05-03 done — site is live in production)
+Status: Ready to execute 05-04
+Last activity: 2026-09-04 -- Phase 05 Plan 03 (deploy) complete: site live at https://portifolio-pessoal-seven-sigma.vercel.app
 
-Progress: [██████████] 100%
+Progress: [█████████░] 94%
 
 ## Performance Metrics
 
@@ -56,6 +56,7 @@ Progress: [██████████] 100%
 | Phase 01 P01 | 30min | 3 tasks | 11 files |
 | Phase 01 P02 | 45min | 2 tasks | 3 files |
 | Phase 01 P03 | 25min | 2 tasks | 4 files |
+| Phase 05 P03 | ~65min (16min active, ~49min paused at a human-action checkpoint) | 3 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -73,6 +74,8 @@ Recent decisions affecting current work:
 - [Phase 01-02]: glass-panel writes only unprefixed backdrop-filter, relies on Lightning CSS autoprefixer for the -webkit- twin — Hand-writing both properties triggers a Lightning CSS prefix-collapsing pass that silently drops whichever is written first, breaking cross-browser rendering depending on declaration order
 - [Phase 01-03]: scripts/verify-content-schema.mjs runs two full astro build subprocess invocations (positive + negative) to prove schema enforcement, not just assert it
 - [Phase 01-03]: src/data/site.ts scaffolded as a plain typed TS singleton (D-02), not a Content Collection — reserved for the one genuine repeating list (projects)
+- [Phase 05-03]: Production URL is the Vercel-assigned `https://portifolio-pessoal-seven-sigma.vercel.app`, not the clean `https://portifolio-pessoal.vercel.app` — the clean subdomain was already taken by an unrelated project on a different Vercel account; still satisfies D-01 (default Vercel subdomain, no custom domain)
+- [Phase 05-03]: A brand-new GitHub repo is not automatically covered by a Vercel GitHub App installation scoped to "Only select repositories" — repository access must be granted per-repo in GitHub's UI (github.com/settings/installations) before the Git integration will fire any webhook/deployment; `vercel link`/`vercel git connect` only write Vercel's own link record and cannot grant this
 
 ### Pending Todos
 
@@ -92,7 +95,7 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-09-04T00:08:37.620Z
-Stopped at: Phase 5 context gathered
-Resume file: .planning/phases/05-security-hardening-deploy/05-CONTEXT.md
+Last session: 2026-09-04T18:16:14.000Z
+Stopped at: Completed 05-03-PLAN.md
+Resume file: None
 </content>
