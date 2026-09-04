@@ -14,11 +14,10 @@ import vercel from "@astrojs/vercel";
 export default defineConfig({
   // Astro 7's default, stated explicitly per CLAUDE.md.
   output: "static",
-  // TODO(Phase 5): replace with the real production domain once DEPLOY-01
-  // assigns it — every og:image/canonical/sitemap/robots.txt URL depends on
-  // this. ".example" is an RFC 2606-reserved placeholder TLD, guaranteed
-  // never to resolve to a real site.
-  site: "https://portfolio-felipe-salles.example",
+  // DEPLOY-01: real production origin, assigned by Vercel (D-01 default
+  // *.vercel.app subdomain, no custom domain). Every og:image/canonical/
+  // sitemap/robots.txt URL depends on this single value.
+  site: "https://portifolio-pessoal-seven-sigma.vercel.app",
   // Kept enabled for CLAUDE.md compliance / forward-compatibility even
   // though this project's own vercel.json (not this bridge) is the verified
   // delivery mechanism for the security headers — see 05-RESEARCH.md

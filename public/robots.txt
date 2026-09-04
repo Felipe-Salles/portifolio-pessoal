@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://portfolio-felipe-salles.example/sitemap-index.xml
+Sitemap: https://portifolio-pessoal-seven-sigma.vercel.app/sitemap-index.xml
