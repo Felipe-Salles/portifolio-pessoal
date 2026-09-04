@@ -430,22 +430,27 @@ vercel git connect          # connects the linked Vercel project to the
 
 **If this table is empty:** N/A — see entries above. All other claims in this research (npm registry versions, Vercel `vercel.json` schema, `gh`/`vercel` CLI command syntax, the withastro/astro#13996 issue/fix, the current build's actual script/style/data-URI inventory) were verified live against official documentation, live CLI probes against this exact environment, or direct inspection of this project's real `dist/` build output during this research session.
 
-## Open Questions
+## Open Questions (RESOLVED)
+
+> All three questions below were resolved during phase planning. Each carries an inline `RESOLVED:` marker naming the plan and task that operationalized its recommendation. No question remains open at execution time.
 
 1. **Does `staticHeaders: true` + `security.csp` actually deliver a correct CSP header on THIS project's real deployment, given `@astrojs/vercel@11.0.10`?**
    - What we know: the specific bug that caused this to fail for `output:"static"` (withastro/astro#13996) was fixed by a merged PR; the current adapter version postdates the fix.
    - What's unclear: Astro's own current documentation still labels `staticHeaders` "Available for: Serverless" (not "Serverless, Static") with no caveat explaining why — meaning either the docs are stale/imprecise, or there's a real remaining limitation not fully captured by the closed issue.
    - Recommendation: don't gate the plan on this working — use the hand-authored `vercel.json` as the verified primary mechanism (already reflected in this research's recommendation). Optionally have the executor enable `security.csp: true` too and inspect `.vercel/output/config.json` after `vercel build` out of curiosity/future-proofing, but this is not required for SEC-02 to pass.
+   - RESOLVED: operationalized by 05-03 Task 2's remediation ladder. The plan never gates SEC-02/SEC-03 on the `staticHeaders` bridge — the hand-authored `vercel.json` is the primary mechanism and `npm run verify:deploy` proves delivery against the live URL. If the adapter's Build Output API config is observed superseding the root `vercel.json`, rung 3 disables only `staticHeaders` (adapter retained, per CLAUDE.md) and rung 4 removes the adapter as a documented last resort. Either way the headers ship.
 
 2. **Exact `npm audit` findings are unknown until run against this project's actual current lockfile** (research did not run a full install/audit in this session to avoid mutating repo state beyond what's needed).
    - What we know: `npm audit --audit-level=high` is the correct CI-gate invocation (verified via WebSearch, cross-referenced against npm's own documented exit-code behavior).
    - What's unclear: whether any current dependency (e.g., in `playwright`, `sharp`, or a transitive dep) currently has a high/critical advisory.
    - Recommendation: the plan should include running `npm audit --audit-level=high` as an early Task, with remediation (update/override/accept-and-document, per CONTEXT.md's discretion note) handled based on whatever it actually reports at execution time — not pre-decided here.
+   - RESOLVED: operationalized by 05-02 Task 2, which adds `audit:ci` (`npm audit --audit-level=high`), runs it, and — if it does not exit 0 — follows a four-step remediation ladder (`npm audit fix` → targeted update → `npm audit fix --force` gated on `npm run verify` staying green → written accept-and-document justification). Nothing about the findings is pre-decided in this research.
 
 3. **Final GitHub repo name and visibility.**
    - What we know: no strong user preference surfaced (CONTEXT.md discretion note); `git remote -v` is currently empty.
    - What's unclear: the exact repo name to use (this project's local folder is `portifolio-pessoal`/`portifolio pessoal` — with a space, which is not a valid GitHub repo name and would need sanitizing, e.g. `portifolio-pessoal` or `felipe-salles-portfolio`).
    - Recommendation: confirm the exact repo name with the user at plan-execution time (a `checkpoint:human-verify`-style confirmation before running `gh repo create`, since this is a one-time, mildly awkward-to-undo naming decision — renaming later is possible but breaks any already-shared links).
+   - RESOLVED: operationalized by 05-03 Task 1, a blocking `checkpoint:decision` that confirms the exact repo name, visibility and the `master` → `main` rename with the user before any `gh repo create` runs. Task 2 then consumes the recorded answer verbatim.
 
 ## Environment Availability
 
