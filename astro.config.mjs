@@ -6,6 +6,10 @@ import icon from "astro-icon";
 // Source: 04-RESEARCH.md Code Examples "astro.config.mjs additions" (verified
 // against docs.astro.build/en/guides/integrations-guide/sitemap/) — SEO-03.
 import sitemap from "@astrojs/sitemap";
+// Source: 05-RESEARCH.md Code Examples "astro.config.mjs additions" (verified
+// against docs.astro.build/en/guides/integrations-guide/vercel/) — Vercel
+// deploy target adapter, required per CLAUDE.md.
+import vercel from "@astrojs/vercel";
 
 export default defineConfig({
   // Astro 7's default, stated explicitly per CLAUDE.md.
@@ -15,6 +19,17 @@ export default defineConfig({
   // this. ".example" is an RFC 2606-reserved placeholder TLD, guaranteed
   // never to resolve to a real site.
   site: "https://portfolio-felipe-salles.example",
+  // Kept enabled for CLAUDE.md compliance / forward-compatibility even
+  // though this project's own vercel.json (not this bridge) is the verified
+  // delivery mechanism for the security headers — see 05-RESEARCH.md
+  // Pitfall 1 (staticHeaders has a documented history of not reliably
+  // delivering headers, including CSP, for output:"static" builds). No
+  // `security.csp` key here on purpose: per D-04 the enforcing CSP header
+  // is hand-authored in vercel.json, and Astro's CSP feature would only add
+  // a <meta> tag that cannot express frame-ancestors anyway.
+  adapter: vercel({
+    staticHeaders: true,
+  }),
   integrations: [
     icon(),
     sitemap({
