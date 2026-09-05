@@ -50,7 +50,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Acessibilidade
 
-- [x] **A11Y-01**: Navegação é semântica (`<nav>`, `<main>`, hierarquia de headings) e totalmente navegável por teclado, com estados de foco visíveis (glow cyan) — ⚠ ver Known Gaps: footer social-link row overflow em viewport mobile estreito
+- [x] **A11Y-01**: Navegação é semântica (`<nav>`, `<main>`, hierarquia de headings) e totalmente navegável por teclado, com estados de foco visíveis (glow cyan)
 - [x] **A11Y-02**: Site tem página 404 customizada reaproveitando layout e nav
 - [x] **A11Y-03**: Imagens e ícones têm alt text descritivo (não nomes de arquivo)
 - [x] **A11Y-04**: Contraste de texto/painéis glassmorphism passa em verificação WCAG (Lighthouse/axe) contra o fundo renderizado real, não apenas os valores de token do DESIGN.md
@@ -126,7 +126,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SEO-04 | Phase 4 | Complete |
 | SEO-05 | Phase 4 | Complete |
 | SEO-06 | Phase 2 | Complete |
-| A11Y-01 | Phase 2 | Complete (known gap — see Milestone Audit) |
+| A11Y-01 | Phase 2 | Complete |
 | A11Y-02 | Phase 4 | Complete |
 | A11Y-03 | Phase 4 | Complete |
 | A11Y-04 | Phase 4 | Complete |
