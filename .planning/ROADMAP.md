@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Layout & Navigation Shell** - Shared nav/footer/page shell matching the design system, in PT-BR, fully keyboard-accessible (completed 2026-09-03)
 - [x] **Phase 3: Content Sections** - Hero, Dossier, Tech Stack, Projects, and Contact sections rendered and responsive per the prototype (completed 2026-09-03)
 - [x] **Phase 4: SEO, Accessibility & Polish** - Discoverability, share previews, custom 404, and accessibility verification (completed 2026-09-03)
-- [ ] **Phase 5: Security Hardening & Deploy** - Production security headers verified live on Vercel over HTTPS
+- [x] **Phase 5: Security Hardening & Deploy** - Production security headers verified live on Vercel over HTTPS (completed 2026-09-05)
 
 ## Phase Details
 
@@ -98,7 +98,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] 05-01-PLAN.md — The failing live-header gate, the `@astrojs/vercel` adapter, the six-header `vercel.json`, and the build-time CSP-hash drift gate
 - [x] 05-02-PLAN.md — SEC-04 pre-deploy hygiene: the client-secret gate over git index/`src/`/`dist/` plus the `npm audit --audit-level=high` gate
 - [x] 05-03-PLAN.md — Go live: GitHub repo, Vercel Git integration, first production deploy, real-domain `site:` swap, and the live header gate turning green
-- [ ] 05-04-PLAN.md — Real-browser CSP/inline-script gate against production plus blocking human sign-off with an independent securityheaders.com scan
+- [x] 05-04-PLAN.md — Real-browser CSP/inline-script gate against production plus blocking human sign-off with an independent securityheaders.com scan
 
 ## Progress
 
@@ -111,4 +111,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 2. Layout & Navigation Shell | 3/3 | Complete   | 2026-09-03 |
 | 3. Content Sections | 3/3 | Complete   | 2026-09-03 |
 | 4. SEO, Accessibility & Polish | 5/5 | Complete   | 2026-09-03 |
-| 5. Security Hardening & Deploy | 3/4 | In Progress|  |
+| 5. Security Hardening & Deploy | 4/4 | Complete   | 2026-09-05 |
