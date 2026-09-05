@@ -18,10 +18,10 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-09-02)
+See: .planning/PROJECT.md (updated 2026-09-05)
 
 **Core value:** Um visitante consegue em poucos segundos entender quem é o dono do site, quais tecnologias domina, e ver projetos reais que provam isso — com o site carregando rápido e passando confiança técnica.
-**Current focus:** Milestone complete
+**Current focus:** Planning next milestone (conteúdo real: REAL-01/02/03)
 
 ## Current Position
 
