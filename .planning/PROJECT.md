@@ -12,7 +12,9 @@ Um visitante (recrutador, cliente, colega) consegue em poucos segundos entender 
 
 ### Validated
 
-(None yet — ship to validate)
+- [x] Site aplica security headers corretos (CSP, HSTS, X-Frame-Options, Referrer-Policy, Permissions-Policy) — Validated in Phase 5: verificado com gate próprio (`verify:deploy`) e com um scan independente (securityheaders.com, nota A) contra a URL de produção real
+- [x] Site segue boas práticas gerais de segurança (sem segredos expostos, dependências sem vulnerabilidades conhecidas, HTTPS via Vercel) — Validated in Phase 5: gate de secret hygiene, `npm audit` com 0 vulnerabilidades (via override do `path-to-regexp`), HTTPS confirmado ao vivo
+- [x] Site publicado e acessível via deploy na Vercel — Validated in Phase 5: repo público no GitHub, deploy contínuo via integração Git (push → produção), sem `vercel deploy` manual
 
 ### Active
 
@@ -22,10 +24,7 @@ Um visitante (recrutador, cliente, colega) consegue em poucos segundos entender 
 - [ ] Visitante navega por uma seção de Projetos (cards com nome, descrição, tags de tech, links live/repo quando existirem)
 - [ ] Visitante encontra uma seção de Contato com links diretos (email, GitHub, LinkedIn — sem formulário)
 - [ ] Site é responsivo (mobile-first reflow conforme DESIGN.md: margens 20px, grid adaptativo)
-- [ ] Site aplica security headers corretos (CSP, HSTS, X-Frame-Options, Referrer-Policy, Permissions-Policy)
-- [ ] Site segue boas práticas gerais de segurança (sem segredos expostos, dependências sem vulnerabilidades conhecidas, HTTPS via Vercel)
 - [ ] Conteúdo de projetos gerenciado via Astro Content Collections (Markdown/MDX)
-- [ ] Site publicado e acessível via deploy na Vercel
 
 ### Out of Scope
 
@@ -58,7 +57,7 @@ Um visitante (recrutador, cliente, colega) consegue em poucos segundos entender 
 | Astro como framework | Simplicidade por padrão, complexidade (islands) só quando necessário — preferência explícita do usuário | — Pending |
 | Content Collections para projetos | Editar/adicionar projetos sem tocar em componentes; nativo do Astro | — Pending |
 | Contato só por links diretos (sem formulário) | Minimiza superfície de ataque e elimina necessidade de backend/serviço de envio de e-mail | — Pending |
-| Deploy na Vercel | Suporte de primeira classe a Astro, HTTPS/CDN prontos, facilita configuração de security headers | — Pending |
+| Deploy na Vercel | Suporte de primeira classe a Astro, HTTPS/CDN prontos, facilita configuração de security headers | Site ao vivo em produção (Phase 5), deploy contínuo via GitHub, headers verificados |
 | Sem blog no v1 | Escopo enxuto — usuário quer só as seções já prototipadas | — Pending |
 | PT apenas no v1 | Usuário optou por não fazer i18n agora | — Pending |
 | Conteúdo real adiado para o final | Usuário quer validar estrutura/funcionalidade primeiro, alinhar conteúdo depois | — Pending |
@@ -81,4 +80,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-09-03 after Phase 4 (seo-accessibility-polish) completion*
+*Last updated: 2026-09-05 after Phase 5 (security-hardening-deploy) completion — milestone v1.0 complete, all 5 phases shipped*
