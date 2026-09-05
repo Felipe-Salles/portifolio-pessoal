@@ -22,11 +22,11 @@ import { site } from "../data/site.ts";
 ---
 
 <footer class="bg-surface-container-lowest w-full mt-section-gap border-t border-outline-variant/20">
-  <div class="flex flex-col md:flex-row justify-between items-center w-full px-margin-mobile md:px-gutter py-unit gap-4 max-w-container-max mx-auto h-24">
+  <div class="flex flex-col md:flex-row justify-between items-center w-full px-margin-mobile md:px-gutter py-unit gap-4 max-w-container-max mx-auto min-h-24">
     <div class="font-mono-label text-mono-label text-on-surface-variant">
       © {new Date().getFullYear()} {site.brand} — todos os direitos reservados
     </div>
-    <div data-footer-socials class="flex gap-6 font-mono-label text-mono-label uppercase text-on-surface-variant">
+    <div data-footer-socials class="flex flex-wrap justify-center gap-6 font-mono-label text-mono-label uppercase text-on-surface-variant">
       {site.socials.map((s) => (
         <a
           href={s.href}
