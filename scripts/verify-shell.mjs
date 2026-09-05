@@ -227,10 +227,10 @@ if (!skipLinkMatch) {
 // -----------------------------------------------------------------------
 let navOk = true;
 const navAnchors = [
-  { href: "#dossier", label: "Dossier" },
-  { href: "#stack", label: "Stack" },
-  { href: "#projects", label: "Projects" },
-  { href: "#contact", label: "Contact" },
+  { href: "/#dossier", label: "Dossier" },
+  { href: "/#stack", label: "Stack" },
+  { href: "/#projects", label: "Projects" },
+  { href: "/#contact", label: "Contact" },
 ];
 for (const { href, label } of navAnchors) {
   const anchorRegex = new RegExp(
@@ -243,12 +243,12 @@ for (const { href, label } of navAnchors) {
   }
 }
 const connectAnchorRegex =
-  /<a\b[^>]*href="#contact"[^>]*>\s*Connect\s*<\/a>/i;
+  /<a\b[^>]*href="\/#contact"[^>]*>\s*Connect\s*<\/a>/i;
 if (!connectAnchorRegex.test(html)) {
   navOk = false;
   addViolation(
     "nav",
-    'missing Connect anchor with href="#contact" (D-02 — must be an anchor)'
+    'missing Connect anchor with href="/#contact" (D-02 — must be an anchor, path-qualified so it works from any route)'
   );
 }
 const connectButtonRegex = /<button\b[^>]*>\s*Connect\s*<\/button>/i;
@@ -498,10 +498,10 @@ if (overlayTagMatch) {
     addViolation("overlay", "could not extract the overlay element's inner markup");
   } else {
     const overlayAnchors = [
-      { href: "#dossier", label: "Dossier" },
-      { href: "#stack", label: "Stack" },
-      { href: "#projects", label: "Projects" },
-      { href: "#contact", label: "Contact" },
+      { href: "/#dossier", label: "Dossier" },
+      { href: "/#stack", label: "Stack" },
+      { href: "/#projects", label: "Projects" },
+      { href: "/#contact", label: "Contact" },
     ];
     for (const { href, label } of overlayAnchors) {
       const anchorRegex = new RegExp(
@@ -516,12 +516,12 @@ if (overlayTagMatch) {
         );
       }
     }
-    const overlayConnectRegex = /<a\b[^>]*href="#contact"[^>]*>\s*Connect\s*<\/a>/i;
+    const overlayConnectRegex = /<a\b[^>]*href="\/#contact"[^>]*>\s*Connect\s*<\/a>/i;
     if (!overlayConnectRegex.test(overlayInner)) {
       overlayOk = false;
       addViolation(
         "overlay",
-        'overlay missing Connect anchor with href="#contact"'
+        'overlay missing Connect anchor with href="/#contact"'
       );
     }
   }
