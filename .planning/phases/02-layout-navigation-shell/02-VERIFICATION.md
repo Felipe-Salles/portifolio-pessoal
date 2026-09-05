@@ -1,13 +1,15 @@
 ---
 phase: 02-layout-navigation-shell
 verified: 2026-09-02T23:25:00-03:00
-status: human_needed
-score: 26/26 automated must-haves verified (4 roadmap SC + 22 plan-level truths); 1 item needs human visual confirmation; 1 documentation-tracking gap noted
+resolved: 2026-09-05T02:20:00Z
+status: resolved
+score: 26/26 automated must-haves verified (4 roadmap SC + 22 plan-level truths); 1 item confirmed and fixed during v1.0 milestone audit; 1 documentation-tracking gap resolved
 overrides_applied: 0
 human_verification:
   - test: "Load the site at a real mobile viewport (320-390px width) and scroll to the footer. Visually inspect the social-link row (4 x 'PLACEHOLDER' labels)."
     expected: "All four footer links are visible on screen (wrapped to a second line if needed), not clipped off-screen while still being Tab-reachable."
     why_human: "Code review (02-REVIEW.md WR-01) computed via layout arithmetic that the `data-footer-socials` container (`flex gap-6`, no `flex-wrap`) needs ~470px of width for 4 uppercase mono-label PLACEHOLDER links, but a 375px viewport minus 20px×2 margins leaves ~335px. `body { overflow-x: hidden }` (global.css:174) means any overflow is clipped, not scrollable — the anchors would remain in the DOM and keyboard-focusable but invisible, which is a WCAG 2.4.7-relevant defect. This requires an actual rendered viewport to confirm or refute; grep/build output cannot render CSS flex layout to detect visual overflow."
+    resolution: "Confirmed live via Playwright during the v1.0 milestone audit (2026-09-05) — first/last footer links were indeed partially off-screen at 375px. Fixed same session: `flex-wrap justify-center` added to `data-footer-socials` (commit `331d2f0`), deployed, and re-verified live — all 4 links now fully visible within a 375px viewport."
 ---
 
 # Phase 2: Layout & Navigation Shell Verification Report
