@@ -41,19 +41,19 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### SEO & Descoberta
 
-- [ ] **SEO-01**: Toda página tem `<title>` e `<meta name="description">` próprios via layout compartilhado
-- [ ] **SEO-02**: Site tem tags Open Graph/Twitter Card com imagem de preview estática (1200×630, seguindo paleta Cyber-Sophisticate)
-- [ ] **SEO-03**: Site gera `sitemap.xml` via `@astrojs/sitemap`
-- [ ] **SEO-04**: Site tem `robots.txt` permitindo indexação
-- [ ] **SEO-05**: Site tem favicon seguindo a paleta Cyber-Sophisticate
+- [x] **SEO-01**: Toda página tem `<title>` e `<meta name="description">` próprios via layout compartilhado
+- [x] **SEO-02**: Site tem tags Open Graph/Twitter Card com imagem de preview estática (1200×630, seguindo paleta Cyber-Sophisticate)
+- [x] **SEO-03**: Site gera `sitemap.xml` via `@astrojs/sitemap`
+- [x] **SEO-04**: Site tem `robots.txt` permitindo indexação
+- [x] **SEO-05**: Site tem favicon seguindo a paleta Cyber-Sophisticate
 - [x] **SEO-06**: HTML declara `lang="pt-BR"` corretamente (não copiado do `lang="en"` do protótipo)
 
 ### Acessibilidade
 
-- [x] **A11Y-01**: Navegação é semântica (`<nav>`, `<main>`, hierarquia de headings) e totalmente navegável por teclado, com estados de foco visíveis (glow cyan)
-- [ ] **A11Y-02**: Site tem página 404 customizada reaproveitando layout e nav
-- [ ] **A11Y-03**: Imagens e ícones têm alt text descritivo (não nomes de arquivo)
-- [ ] **A11Y-04**: Contraste de texto/painéis glassmorphism passa em verificação WCAG (Lighthouse/axe) contra o fundo renderizado real, não apenas os valores de token do DESIGN.md
+- [x] **A11Y-01**: Navegação é semântica (`<nav>`, `<main>`, hierarquia de headings) e totalmente navegável por teclado, com estados de foco visíveis (glow cyan) — ⚠ ver Known Gaps: footer social-link row overflow em viewport mobile estreito
+- [x] **A11Y-02**: Site tem página 404 customizada reaproveitando layout e nav
+- [x] **A11Y-03**: Imagens e ícones têm alt text descritivo (não nomes de arquivo)
+- [x] **A11Y-04**: Contraste de texto/painéis glassmorphism passa em verificação WCAG (Lighthouse/axe) contra o fundo renderizado real, não apenas os valores de token do DESIGN.md
 
 ### Segurança
 
@@ -120,16 +120,16 @@ Which phases cover which requirements. Updated during roadmap creation.
 | LAY-01 | Phase 3 | Complete |
 | LAY-02 | Phase 3 | Complete |
 | LAY-03 | Phase 2 | Complete |
-| SEO-01 | Phase 4 | Pending |
-| SEO-02 | Phase 4 | Pending |
-| SEO-03 | Phase 4 | Pending |
-| SEO-04 | Phase 4 | Pending |
-| SEO-05 | Phase 4 | Pending |
+| SEO-01 | Phase 4 | Complete |
+| SEO-02 | Phase 4 | Complete |
+| SEO-03 | Phase 4 | Complete |
+| SEO-04 | Phase 4 | Complete |
+| SEO-05 | Phase 4 | Complete |
 | SEO-06 | Phase 2 | Complete |
-| A11Y-01 | Phase 2 | Complete |
-| A11Y-02 | Phase 4 | Pending |
-| A11Y-03 | Phase 4 | Pending |
-| A11Y-04 | Phase 4 | Pending |
+| A11Y-01 | Phase 2 | Complete (known gap — see Milestone Audit) |
+| A11Y-02 | Phase 4 | Complete |
+| A11Y-03 | Phase 4 | Complete |
+| A11Y-04 | Phase 4 | Complete |
 | SEC-01 | Phase 1 | Complete |
 | SEC-02 | Phase 5 | Complete |
 | SEC-03 | Phase 5 | Complete |
